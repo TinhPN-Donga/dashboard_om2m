@@ -1,0 +1,208 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapbox Example with Multiple Markers</title>
+    <script src="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.js"></script>
+    <link
+        href="https://api.mapbox.com/mapbox-gl-js/v2.6.1/mapbox-gl.css"
+        rel="stylesheet"
+    />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoidGluaHBuIiwiYSI6ImNscGplZDBnMDAxZWgya3BsNzgyMnh2dm4ifQ.ELLVhUjV-fAL3AsZknkZsg'; // Replace with your Mapbox access token
+
+        var map = new mapboxgl.Map({
+            container: 'map',
+            style: 'mapbox://styles/mapbox/streets-v11',
+            center: [108.22132, 16.03225],
+            zoom: 15
+        });
+
+        // Array of marker coordinates
+        var markers = [
+        { lng: 108.22132, lat:16.03225, isFlood: false},
+        { lng: 108.21821, lat:16.03671, isFlood: true},
+        { lng: 108.21870, lat:16.03250, isFlood: false},
+        ];
+
+        // Add markers to the map
+        markers.forEach(function(marker) {
+          var el = document.createElement('div');
+          el.className = 'custom-marker';
+          el.style.backgroundColor = marker.isFlood ? 'red':'blue';
+          el.style.width = '30px';
+          el.style.height = '18px';
+          el.style.borderRadius = '15px';
+            new mapboxgl.Marker(el)
+                .setLngLat([marker.lng, marker.lat])
+                .addTo(map);
+        });
+    </script>
+</body>
+</html>
+ -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <title>Add a default marker</title>
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <script src="https://cdn.jsdelivr.net/npm/@goongmaps/goong-js@1.0.9/dist/goong-js.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/@goongmaps/goong-js@1.0.9/dist/goong-js.css" rel="stylesheet" />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+    <style>
+        .marker {
+            display: block;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 0;
+            background-color: rgba(153, 247, 170, 0.8);
+            width: 40px;
+            height: 40px;
+            position: absolute;
+        }
+        /* .marker_area{
+            position: relative;
+        } */
+        .wrapper{
+            width: 80px;
+            height: 80px;
+            border-radius: 10px;
+            background-color: white;
+            position: absolute;
+            left: -20px;
+            top: -85px;
+            box-shadow: 5px 5px 5px rgb(207, 207, 207);
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id="map"></div>
+    <script>
+        var geojson = {
+            'type': 'FeatureCollection',
+            'features': [
+                {
+                    'type': 'Feature',
+                    'id': 'Feature',
+                    'properties': {
+                        'message': 'Foo',
+                        'iconSize': [60, 60]
+                    },
+                    'geometry': {
+                        'type': 'Point',
+                        'coordinates': [108.22132, 16.03225]
+                    }
+                },
+                {
+                    'type': 'Feature',
+                    'id': 'Feature',
+                    'properties': {
+                        'message': 'Bar',
+                        'iconSize': [50, 50]
+                    },
+                    'geometry': {
+                        'type': 'Point',
+                        'coordinates': [108.218, 16.0322]
+                    }
+                },
+                {
+                    'type': 'Feature',
+                    'id': 'Feature',
+                    'properties': {
+                        'message': 'Baz',
+                        'iconSize': [40, 40]
+                    },
+                    'geometry': {
+                        'type': 'Point',
+                        'coordinates': [108.2230, 16.03425]
+                    }
+                }
+            ]
+        };
+
+        goongjs.accessToken = 'wnicbAmnNkoMHNYUKWnlFHezV189FjmMwkNJ7hKW';
+        var map = new goongjs.Map({
+            container: 'map',
+            style: 'https://tiles.goong.io/assets/goong_map_web.json',
+            center: [108.22132, 16.03225],
+            zoom: 15
+        });
+
+        // add markers to map
+        geojson.features.forEach(function (marker) {
+            // create a DOM element for the marker
+            var el = document.createElement('div');
+            el.className = 'marker_area';
+            // el.className = 'marker';
+            // el.style.backgroundColor = 'rgba(153, 247, 170, 0.8)';
+            // el.style.width = '40px';
+            // el.style.height = '40px';
+
+            const newDiv = document.createElement("div");
+            const markerMessage = document.createElement("div");
+            markerMessage.className = "wrapper";
+            el.appendChild(markerMessage);
+            newDiv.innerHTML = `
+                <div class='wrapper'>
+                    <p>${marker.properties.message}</p>
+                </div>
+                <div class='marker'>
+                </div>
+            `;
+            el.appendChild(newDiv);
+            el.addEventListener('click', function () {
+                console.log(markerMessage.style.display);
+                map.flyTo({
+                    center: marker.geometry.coordinates
+                });
+                if(!markerMessage.style.display || markerMessage.style.display == 'none') {
+                    markerMessage.style.display = 'block';
+                }else{
+                    markerMessage.style.display = 'none';
+                }
+            });
+
+            // add marker to map
+            new goongjs.Marker(el)
+                .setLngLat(marker.geometry.coordinates)
+                .addTo(map);
+        });
+    </script>
+</body>

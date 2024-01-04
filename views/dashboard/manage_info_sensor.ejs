@@ -1,0 +1,178 @@
+<%- include('includes/header') %>
+<div class="page-wrapper">
+  <div class="page-breadcrumb bg-white">
+    <div class="row align-items-center">
+      <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+        <h4 class="page-title"><%=title%>/<%=sensor%></h4>
+      </div>
+    </div>
+  </div>
+  <div class="container-fluid">
+    <div class="row">
+      <div class="col-md-12 col-lg-12 col-sm-12">
+        <div class="white-box">
+          <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+            <h4 class="page-title" style="font-weight: bold">Descriptor</h4>
+          </div>
+          <%if(!Object.keys(data.description).length){%>
+            <h4 class="page-title">No data</h4>
+          <%}else{%>
+          <div class="table-responsive">
+            <table class="table no-wrap">
+              <thead>
+                <tr>
+                  <%for(let k in data.description){%>
+                  <th class="border-top-0"><%= k%></th>
+                  <%}%>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <%for(let k in data.description){%>
+                  <td class="txt-oflo"><%= data.description[k]%></td>
+                  <%}%>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <%}%>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 col-lg-12 col-sm-12">
+        <div class="white-box">
+          <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+            <h4 class="page-title" style="font-weight: bold">
+              Data: <%=count%>
+            </h4>
+          </div>
+          <%if(!data.data){%>
+            <h4 class="page-title">No data</h4>
+          <%}else{%>
+          <div class="table-responsive">
+            <table class="table no-wrap">
+              <thead>
+                <tr>
+                  <th class="border-top-0">#</th>
+                  <%for(let k in data.data[0]){%>
+                  <th class="border-top-0"><%= k%></th>
+                  <%}%>
+                  <th class="border-top-0 text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%for(let i=0; i < data.data.length; i++){%>
+                <tr>
+                  <td class="txt-oflo"><%= i+1%></td>
+                  <%for(let k in data.data[i]){%>
+                  <td class="txt-oflo"><%= data.data[i][k]%></td>
+                  <%}%>
+                  <td class="text-center">
+                    <a
+                      class="btn btn-danger"
+                      style="color: white"
+                      onclick="confirmAndDelete(`<%= data.data[i]['id']%>`)"
+                      >Delete</a
+                    >
+                  </td>
+                </tr>
+                <%}%>
+              </tbody>
+            </table>
+          </div>
+          <%}%>
+
+          <script>
+            async function confirmAndDelete(id) {
+              const isConfirmed = confirm("Do you want to delete data?");
+              if (isConfirmed) {
+                const deleteUrl = `/delete/data/${id}`;
+                alert(deleteUrl);
+                await fetch(deleteUrl, {
+                  method: "DELETE",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                })
+                  .then((response) => {
+                    alert(response.data);
+                    if (response.ok) {
+                      window.location.reload();
+                    } else {
+                      alert("Delete  failed!!!");
+                    }
+                  })
+                  .catch((error) => {
+                    alert("Delete failed!!!");
+                  });
+              }
+            }
+          </script>
+
+          <div class="d-flex justify-content-end">
+            <%if(countPaginate <=10){%> <%for(let i=0; i < countPaginate;
+            i++){%> <%if((i+1)==skip){%>
+            <p class="p-1"><%= i + 1%></p>
+            <%}else{%>
+            <a class="p-1" href="/info/<%=title%>/<%=sensor%>?skip=<%= i + 1%>">
+              <%= i + 1%>
+            </a>
+            <%}%> <%}%> <%}else{%> <%if(skip> 1){%>
+            <a
+              class="p-1"
+              href="/info/<%=title%>/<%=sensor%>?skip=<%= skip - 1%>"
+            >
+              <
+            </a>
+            <%}%> <%for(let i=0; i < 3; i++){%> <%if((i+1)==skip){%>
+            <p class="p-1"><%= i + 1%></p>
+            <%}else{%>
+            <a class="p-1" href="/info/<%=title%>/<%=sensor%>?skip=<%= i + 1%>">
+              <%= i + 1%>
+            </a>
+            <%}%> <%}%>
+            <p class="p-1">...</p>
+            <% if(skip> 3 && skip < countPaginate - 3){%>
+            <p class="p-1"><%=skip%></p>
+            <p class="p-1">...</p>
+            <%}%> <%for(let i=countPaginate-3; i < countPaginate; i++){%>
+            <%if((i+1)==skip){%>
+            <p class="p-1"><%= i + 1%></p>
+            <%}else{%>
+            <a class="p-1" href="/info/<%=title%>/<%=sensor%>?skip=<%= i + 1%>">
+              <%= i + 1%>
+            </a>
+            <%}%> <%}%> <%if(skip < countPaginate){%>
+            <a
+              class="p-1"
+              href="/info/<%=title%>/<%=sensor%>?skip=<%= skip + 1%>"
+            >
+              >
+            </a>
+            <%}%> <%}%>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12 col-lg-12 col-sm-12">
+        <div class="white-box">
+          <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+            <h4 class="page-title" style="font-weight: bold">Subcribe Notify</h4>
+          </div>
+          <a href="/dashboard/create/<%=title%>/<%=sensor%>/subcribe">+ Create new data subscribe</a>
+          <%if(!Object.keys(data.description).length){%>
+            <h4 class="page-title">No data</h4>
+          <%}else{%>
+            
+          <%}%>
+        </div>
+      </div>
+    </div>
+  </div>
+  <footer class="footer text-center">2021 © Admin brought</footer>
+</div>
+<%- include('includes/footer') %>

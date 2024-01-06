@@ -282,10 +282,51 @@ const getInfoTool = async (req, res) => {
         }
       }
     }
+    console.log(`listTitleSensor: ${listTitleSensor}`);
     res.render('dashboard/manage_info_tool.ejs', { title: tool, data: listTitleSensor });
   } catch (error) {
     res.redirect('/');
     // res.status(500).json({ message: error.message });
+  }
+}
+const getJsonDataTool = async (req, res) => {
+  try {
+    const { tool } = req.params;
+    var listTitleSensor = [];
+    var data = await indexService.findInfo(tool, '', 'ty=3&fu=1');
+    if (!data || data.length === 0) {
+      console.log('No Data');
+    } else {
+      var uril = data['m2m:uril'];
+      if (!uril) {
+      } else {
+        for (var s of uril) {
+          const splitUri = s.split('/');
+          if (tool != splitUri[3]) continue;
+          let newData = {
+            name: splitUri[4],
+            data: splitUri[5] ? [splitUri[5]] : [],
+          }
+
+          let index = -1;
+          listTitleSensor.forEach((value, i) => {
+            if (value.name === splitUri[4]) {
+              index = i;
+            }
+          });
+
+          if (index != -1) {
+            listTitleSensor[index].data.push(splitUri[5]);
+          } else {
+            listTitleSensor.push(newData);
+          }
+        }
+      }
+    }
+    res.status(200).json({ data: listTitleSensor });
+  } catch (error) {
+    // res.redirect('/');
+    res.status(500).json({ message: error.message });
   }
 }
 
@@ -326,6 +367,65 @@ const getDataTool = async (req, res) => {
     res.render('dashboard/index', { data: listName });
   } catch (error) {
     res.status(500).json({ message: error.message });
+  }
+};
+
+const getJsonApplication = async (req, res) => {
+  try {
+    var listName = [];
+    var data = await indexService.getDataMN();
+    const listAe = data["m2m:uril"];
+    for (let e of listAe) {
+      let newData = {};
+      const splitRi = e.split('/');
+      newData.name = splitRi[splitRi.length - 1];
+      listName.push(newData);
+    }
+    // res.render('dashboard/index', { data: listName });
+    res.status(200).json({data: listName });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
+
+const getJsonSensor = async (req, res) => {
+  try {
+    const { tool } = req.params;
+    var listTitleSensor = [];
+    var data = await indexService.findInfo(tool, '', 'ty=3&fu=1');
+    if (!data || data.length === 0) {
+      console.log('No Data');
+    } else {
+      var uril = data['m2m:uril'];
+      if (!uril) {
+      } else {
+        for (var s of uril) {
+          const splitUri = s.split('/');
+          if (tool != splitUri[3]) continue;
+          let newData = {
+            name: splitUri[4],
+            data: splitUri[5] ? [splitUri[5]] : [],
+          }
+
+          let index = -1;
+          listTitleSensor.forEach((value, i) => {
+            if (value.name === splitUri[4]) {
+              index = i;
+            }
+          });
+
+          if (index != -1) {
+            listTitleSensor[index].data.push(splitUri[5]);
+          } else {
+            listTitleSensor.push(newData);
+          }
+        }
+      }
+    }
+    res.status(200).json({data: listTitleSensor });
+  } catch (error) {
+    res.redirect('/');
+    // res.status(500).json({ message: error.message });
   }
 };
 
@@ -396,10 +496,10 @@ const postCreateTool = async (req, res) => {
     let data = {};
     await parseString(xmlTextResult, function (err, result) {
       data = result;
-      throw err;
+      if(err) throw err;
     });
     if (!data) throw new Error('Error !!!');
-    res.redirect('dashboard');
+    res.redirect('/dashboard');
   } catch (error) {
     console.log(error.message);
     const messageError = '';
@@ -410,9 +510,7 @@ const postCreateTool = async (req, res) => {
 
 /// create sensor in tool ty=3
 const postCreateSensor = async (req, res) => {
-
-  const arrBody = ['Descriptor','Data'];
-
+  const arrBody = ['DESCRIPTOR','DATA'];
   try {
     const { name } = req.body;
     const { tool } = req.params;
@@ -439,18 +537,15 @@ const postCreateSensor = async (req, res) => {
       });
     };
     res.redirect(`/info/${tool}`);
-    // res.status(200).json({ data: data });
   } catch (error) {
     res.redirect(`?error=${error}`);
-    // res.status(500).json({ message: error.message });
   }
 }
 
 
 ///Funtion create descriptor and data in sensor
 async function createDescriptionAndData(nameData, tool, sensor){
-  const xmlBody = `<m2m:cnt xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${nameData}">
-    </m2m:cnt>`;
+  const xmlBody = `<m2m:cnt xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${nameData}"></m2m:cnt>`;
     const headers = {
       ...configServerOM2M.infoHost.headers,
       'Content-Type': 'application/xml;ty=3',
@@ -480,9 +575,10 @@ const postCreateContainerInSensor = async (req, res) => {
       data = result;
     });
     if (!data) throw new Error('Error !!!');
-    res.status(200).json({ data: data });
-  } catch (error) {
     res.redirect('/');
+    // res.status(200).json({ data: data });
+  } catch (error) {
+    res.redirect('?error=');
   }
 }
 
@@ -496,11 +592,10 @@ const postCreateDataSubcribe= async (req, res) => {
     //   <nct>2</nct>
     // </m2m:cnt>`;
     const xmlBody =  `
-    <m2m:sub xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${title}">
-        <nu>${urlAPI}</nu>
-        <nct>2</nct>
-    </m2m:sub>
-    `
+      <m2m:sub xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${title}">
+          <nu>${urlAPI}</nu>
+          <nct>2</nct>
+      </m2m:sub>`
     const headers = {
       ...configServerOM2M.infoHost.headers,
       'Content-Type': 'application/xml;ty=23',
@@ -517,8 +612,8 @@ const postCreateDataSubcribe= async (req, res) => {
     // if (!data) throw new Error('Error !!!');
     res.status(200).json({ data: data });
   } catch (error) {
-    // res.redirect('/');
     console.log('error: ' + error.message);
+    res.redirect('?error=');
   }
 }
 
@@ -561,6 +656,35 @@ const getCreateTool = async (req, res) => {
   res.render('dashboard/create_tool');
 }
 
+const getCreatePage = async (req, res) => {
+  res.render('dashboard/create_page');
+}
+
+const postCreate = async (req, res) => {
+  const {method} = req.body;
+  switch (method) {
+    case '1': {
+      console.log(req.body);
+      return postCreateTool(req, res);
+    };
+    case '2': {
+      const {application, name} = req.body;
+      req.params.tool = application;
+      return postCreateSensor(req, res);
+    };
+    case '3': {
+      const {application, sensor, title} = req.body;
+      req.params.tool = application;
+      req.params.sensor = sensor;
+      return postCreateContainerInSensor(req, res);
+    };
+    case '4': break;
+    default:
+      break;
+  }
+  res.redirect('?');
+}
+
 const getCreateDataSubcribe = async (req, res) => {
   res.render('dashboard/create_sensor_data_subcribe');
 }
@@ -586,5 +710,11 @@ module.exports = {
   getCreateSensorTool,
   deleteQuery,
   getCreateDataSubcribe,
-  postCreateDataSubcribe
+  postCreateDataSubcribe,
+  getCreatePage,
+  postCreate,
+
+  getJsonApplication,
+  getJsonSensor,
+  getJsonDataTool
 };

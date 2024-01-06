@@ -10,7 +10,13 @@ const routes = (app) => {
 
     app.get('/test-data',(req, res)=>{
         console.log('data loaded');
+        res.json({message: 'loading data...'});
     });
+
+    app.get('/api/application', indexController.getJsonApplication);
+    app.get('/api/:tool/sensor', indexController.getJsonSensor);
+    app.get('/api/:tool/data', indexController.getJsonDataTool);
+
 
     /* */
     app.get('/dashboard', indexController.getDataTool);
@@ -21,6 +27,9 @@ const routes = (app) => {
     app.get('/dashboard/create/:tool/sensor', indexController.getCreateSensorTool);
     app.get('/dashboard/create/:tool/:sensor/container', indexController.getCreateTool);
     app.get('/dashboard/create/:tool/:sensor/subcribe', indexController.getCreateDataSubcribe);
+    app.get('/dashboard/create', indexController.getCreatePage);
+
+
 
     app.get('/delete/data/:id', indexController.deleteById);
     app.delete('/delete/data/:id', indexController.deleteById);
@@ -32,6 +41,7 @@ const routes = (app) => {
     app.post('/dashboard/create/:tool/sensor', indexController.postCreateSensor);
     app.post('/dashboard/create/:tool/:sensor/container', indexController.postCreateContainerInSensor);
     app.post('/dashboard/create/:tool/:sensor/subcribe', indexController.postCreateDataSubcribe);
+    app.post('/dashboard/create', indexController.postCreate);
 
 
 }

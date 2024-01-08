@@ -5,8 +5,6 @@ const routes = (app) => {
     app.get('/', async (req, res)=>{
         res.redirect('/dashboard');
     });
-    app.get('/data-ol', indexController.getAllDataOl);
-    app.get('/data-la', indexController.getAllDataLa);
 
     app.get('/test-data',(req, res)=>{
         console.log('data loaded');
@@ -15,8 +13,7 @@ const routes = (app) => {
 
     app.get('/api/application', indexController.getJsonApplication);
     app.get('/api/:tool/sensor', indexController.getJsonSensor);
-    app.get('/api/:tool/data', indexController.getJsonDataTool);
-
+    app.get('/api/:tool/:sensor/data', indexController.getSensorData);
 
     /* */
     app.get('/dashboard', indexController.getDataTool);
@@ -28,7 +25,6 @@ const routes = (app) => {
     app.get('/dashboard/create/:tool/:sensor/container', indexController.getCreateTool);
     app.get('/dashboard/create/:tool/:sensor/subcribe', indexController.getCreateDataSubcribe);
     app.get('/dashboard/create', indexController.getCreatePage);
-
 
 
     app.get('/delete/data/:id', indexController.deleteById);

@@ -65,7 +65,7 @@
               <tbody>
                 <%for(let i=0; i < data.data.length; i++){%>
                 <tr>
-                  <td class="txt-oflo"><%= i+1%></td>
+                  <td class="txt-oflo"><%= ((skip-1) * limit)+(i + 1)%></td>
                   <%for(let k in data.data[i]){%>
                   <td class="txt-oflo"><%= data.data[i][k]%></td>
                   <%}%>

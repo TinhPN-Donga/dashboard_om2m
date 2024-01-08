@@ -52,7 +52,7 @@
                 const htmlOptionApplication = () => {
                     let html = '';
                     for (let i = 0; i < data.length; i++) {
-                        html += `<option value="${data[i].name}"  ${i == 0 ? "selected" : ""}>${data[i].name}</option>`;
+                        html += `<option value="${data[i]}"  ${i == 0 ? "selected" : ""}>${data[i]}</option>`;
                     }
                     return html;
                 }
@@ -96,17 +96,17 @@
             await addAddListener();
         }
 
-        async function getForm() {
+         function getForm() {
             switch (value) {
-                case '1': return await getHtmlFormCreateApplication();
-                case '2': return await getHtmlFormCreateSensor();
-                case '3': return await getHtmlFormCreateContainer();
-                case '4': return await getHtmlFormCreateNotify();
+                case '1': return  getHtmlFormCreateApplication();
+                case '2': return  getHtmlFormCreateSensor();
+                case '3': return  getHtmlFormCreateContainer();
+                case '4': return  getHtmlFormCreateNotify();
                 default: return '';
             }
         }
 
-        async function getHtmlFormCreateApplication() {
+         function getHtmlFormCreateApplication() {
             return `
                     <form action="" method="POST">
                         <input type="hidden" name="method" value="1">
@@ -122,7 +122,7 @@
                         </form>
                 `;
         }
-        async function getHtmlFormCreateSensor() {
+         function getHtmlFormCreateSensor() {
             return `
                         <form action="" method="POST">
                             <input type="hidden" name="method" value="2">
@@ -140,7 +140,7 @@
                     `;
         }
 
-        async function getHtmlFormCreateContainer() {
+         function getHtmlFormCreateContainer() {
 
             return `
                         <form action="" method="POST">
@@ -163,7 +163,7 @@
                       `;
         }
 
-        async function getHtmlFormCreateNotify() {
+         function getHtmlFormCreateNotify() {
             return `
                         <form action="" name="method" method="POST">
                             <input type="hidden" value="4">

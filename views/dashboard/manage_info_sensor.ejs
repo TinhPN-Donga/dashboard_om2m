@@ -89,7 +89,6 @@
               const isConfirmed = confirm("Do you want to delete data?");
               if (isConfirmed) {
                 const deleteUrl = `/delete/data/${id}`;
-                alert(deleteUrl);
                 await fetch(deleteUrl, {
                   method: "DELETE",
                   headers: {
@@ -97,15 +96,12 @@
                   },
                 })
                   .then((response) => {
-                    alert(response.data);
                     if (response.ok) {
                       window.location.reload();
                     } else {
-                      alert("Delete  failed!!!");
                     }
                   })
                   .catch((error) => {
-                    alert("Delete failed!!!");
                   });
               }
             }

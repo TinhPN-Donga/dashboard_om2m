@@ -80,7 +80,6 @@ const getSensorTool = async (req, res) => {
         if (c.rn == 'DATA') {
           const dataC = c['m2m:cin'];
           const dataSub = c['m2m:sub'];
-
           // m2m:sub => get Subcribe Notify
           if(dataSub && dataSub.length > 0){
             let listDataSub = dataSub.map((value, index)=>{
@@ -88,7 +87,6 @@ const getSensorTool = async (req, res) => {
               newDataSub.name = value.rn;
               let splitId = value.ri.split('/');
               newDataSub.id = splitId[splitId.length - 1];
-              console.log(`dataSub.nu ${value.nu}`);
               newDataSub.listUrl = value.nu;
               return newDataSub;
             });
@@ -110,14 +108,12 @@ const getSensorTool = async (req, res) => {
                     skipAdd = skip;
                   } else {
                     return res.redirect(`/info/${tool}/${sensor}`);
-                    skipAdd = 1;
                   }
                 } else {
                   if (skip <= 0) skipAdd = 1;
                   skipAdd = skip;
                 }
               }
-             
               let start = dataC.length - ((skipAdd > 0 ? skipAdd : skipAdd + 1)*limit);
               let end = dataC.length - ((skipAdd > 0 ? skipAdd - 1: skipAdd)*limit);
               let spliceDataLimit = dataC.slice(start < 0 ? 0: start, end > dataC.length ? dataC.length : end);
@@ -134,7 +130,6 @@ const getSensorTool = async (req, res) => {
             let newData = handleData(dataC[0]);
             resultData.description = newData;
           }
-
         }
       });
     }
@@ -146,9 +141,9 @@ const getSensorTool = async (req, res) => {
 
 function handleData(cin) {
   const newContentDataObject = {};
+  newContentDataObject.id = cin.rn.replace('_','-');
   newContentDataObject.ct = cin.ct;
-  const intnameArray= cin.con.split('"')
-
+  const intnameArray= cin.con.split('"');
   for (let index = 1; index < intnameArray.length; index+=4) {
     const keyname = intnameArray[index];
     newContentDataObject[keyname] = intnameArray[index+2];

@@ -16,7 +16,7 @@ const infoHost = {
     uri: '~/mn-cse/mn-name',
     uriById: (id)=>`~/mn-cse/${id}`,
     // host: 'http://mn-cse.cntt-uda.site',
-    host: 'http://192.168.6.21:8282',
+    host: 'http://192.168.0.140:8282',
     headers: {
         "Content-Type": "application/json",
         "x-m2m-origin": "admin:admin",

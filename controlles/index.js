@@ -64,6 +64,7 @@ const getSensorTool = async (req, res) => {
     resultData.name = cntData.rn;
     resultData.data = [];
     resultData.description = {};
+    resultData.sub =[];
 
     /// split get id
     const splitRi = cntData.ri.split('/');
@@ -78,6 +79,21 @@ const getSensorTool = async (req, res) => {
       containerCnt.forEach((c, index)=>{
         if (c.rn == 'DATA') {
           const dataC = c['m2m:cin'];
+          const dataSub = c['m2m:sub'];
+
+          // m2m:sub => get Subcribe Notify
+          if(dataSub && dataSub.length > 0){
+            let listDataSub = dataSub.map((value, index)=>{
+              let newDataSub = {};
+              newDataSub.name = value.rn;
+              let splitId = value.ri.split('/');
+              newDataSub.id = splitId[splitId.length - 1];
+              console.log(`dataSub.nu ${value.nu}`);
+              newDataSub.listUrl = value.nu;
+              return newDataSub;
+            });
+            resultData.sub = listDataSub;
+          }
           resultData.data = [];
           if (!dataC || dataC.length == 0) {
             return;
@@ -121,9 +137,6 @@ const getSensorTool = async (req, res) => {
 
         }
       });
-      // for (c of containerCnt) {
-        
-      // }
     }
     res.render('dashboard/manage_info_sensor', { title: tool, sensor, data: resultData, skip: skipAdd, count, countPaginate: Math.ceil(count / limit),limit });
   } catch (error) {
@@ -356,11 +369,20 @@ const postCreateContainerInSensor = async (req, res) => {
 /// create container data and descriptor in sensor ty=3
 const postCreateDataSubcribe= async (req, res) => {
   try {
-    const { urlAPI, title } = req.body;
+    const { urlAPI, name } = req.body;
     const { tool, sensor} = req.params;
+    
+    const bodyAddUrl = () =>{
+      if(urlAPI && Array.isArray(urlAPI)){
+        return urlAPI.map((value, index)=>`<nu>${value}</nu>`).join('');
+      }else{
+        return `<nu>${urlAPI}</nu>`;
+      }
+    }
+
     const xmlBody =  `
-      <m2m:sub xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${title}">
-          <nu>${urlAPI}</nu>
+      <m2m:sub xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${name}">
+          ${bodyAddUrl()}
           <nct>2</nct>
       </m2m:sub>`
     const headers = {
@@ -375,7 +397,8 @@ const postCreateDataSubcribe= async (req, res) => {
       if(err) throw err;
       data = result;
     });
-    res.status(200).json({ data: data });
+    // res.status(200).json({ data: data });
+    res.redirect('/');
   } catch (error) {
     console.log('error: ' + error.message);
     res.redirect('?error=');
@@ -424,7 +447,9 @@ const getCreatePage = async (req, res) => {
 }
 
 const postCreate = async (req, res) => {
+  console.log('test 123456');
   const {method} = req.body;
+  console.log('method',method);
   switch (method) {
     case '1': {
       console.log(req.body);
@@ -441,7 +466,13 @@ const postCreate = async (req, res) => {
       req.params.sensor = sensor;
       return postCreateContainerInSensor(req, res);
     };
-    case '4': break;
+    case '4': {
+      console.log(req.body);
+      const {application, sensor} = req.body;
+      req.params.tool = application;
+      req.params.sensor = sensor;
+      return postCreateDataSubcribe(req, res);
+    }
     default:
       break;
   }

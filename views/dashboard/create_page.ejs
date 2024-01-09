@@ -29,6 +29,7 @@
     <script>
         let select = document.getElementById('select');
         let formInner = document.getElementById('form-action');
+        
         let value = '1';
 
         let arraySensor = [];
@@ -42,8 +43,33 @@
         async function addAddListener() {
             let selectTool = document.getElementById('select-tool');
             let selectSensor = document.getElementById('select-sensor');
+            let groupURL = document.getElementById('group-url');
+            let addElemnt = document.getElementById('add-element');
             let valueApplication = "";
             let dataSensor = [];
+
+            if(groupURL){
+                console.log(addElemnt);
+                addElemnt.addEventListener("click",(e)=>{
+                    // Tạo một phần tử input
+                    var inputElement = document.createElement("input");
+
+                    // Thêm các thuộc tính cho phần tử input
+                    inputElement.setAttribute("type", "text");
+                    inputElement.setAttribute("class", "form-control");
+                    inputElement.setAttribute("id", "urlAPI");
+                    inputElement.setAttribute("name", "urlAPI");
+                    inputElement.setAttribute("placeholder", "Enter URL API");
+
+                    // Lấy đối tượng div để chèn phần tử input vào
+                    var formDiv = document.getElementById("myForm");
+
+                    // Thêm phần tử input vào div
+                    groupURL.appendChild(inputElement);
+                    groupURL.appendChild(document.createElement("br"));
+                });
+            }
+
             if (selectTool) {
                 let data = await fetchApi('/api/application');
                 if (data && data.length > 0) {
@@ -89,6 +115,7 @@
                     console.log(e);
                 });
             }
+      
         }
 
         async function buildHtml() {
@@ -119,7 +146,7 @@
                             <input type="text" class="form-control" id="titleSensor" name="label" aria-describedby="titleSensor" placeholder="Input label">
                         </div>
                         <button type="submit" class="btn btn-primary">Submit</button>
-                        </form>
+                    </form>
                 `;
         }
          function getHtmlFormCreateSensor() {
@@ -165,8 +192,8 @@
 
          function getHtmlFormCreateNotify() {
             return `
-                        <form action="" name="method" method="POST">
-                            <input type="hidden" value="4">
+                        <form action="" method="POST">
+                            <input type="hidden" name="method" value="4">
                             <div class="form-group">
                                 <label for="titleSensor">Select tool</label>
                                 <select class="form-select"  name="application" id="select-tool" aria-label="Select Tool" required>
@@ -180,12 +207,14 @@
                             </div>
                             <div class="form-group">
                                 <label for="titleSensor">Title</label>
-                                <input type="text" class="form-control" id="titleSensor" name="title" aria-describedby="titleSensor" placeholder="Title">
+                                <input type="text" class="form-control" id="titleSensor" name="name" aria-describedby="titleSensor" placeholder="Sub Title">
                             </div>
-                            <div class="form-group">
+                            <div class="form-group" >
                                 <label for="titleSensor">Add url API send Notify</label>
-                                <input type="text" class="form-control" id="urlAPI" name="urlAPI" aria-describedby="urlAPI" placeholder="Enter URL API">
-                                <small id="title" class="form-text text-muted">Create ...</small>
+                                <div id="group-url">
+                                    <input type="text" class="form-control" id="urlAPI" name="urlAPI" aria-describedby="urlAPI" placeholder="Enter URL API"></br>
+                                </div>
+                                <a id="add-element" class="btn btn-outline-primary">+ ADD</a>
                             </div>
                             <button type="submit" class="btn btn-primary">Submit</button>
                         </form>

@@ -23,7 +23,6 @@ const routes = (app) => {
     app.get('/dashboard/create-tool', indexController.getCreateTool);
     app.get('/dashboard/create/:tool/sensor', indexController.getCreateSensorTool);
     app.get('/dashboard/create/:tool/:sensor/container', indexController.getCreateTool);
-    app.get('/dashboard/create/:tool/:sensor/subcribe', indexController.getCreateDataSubcribe);
     app.get('/dashboard/create', indexController.getCreatePage);
 
 
@@ -36,7 +35,6 @@ const routes = (app) => {
     app.post('/dashboard/create-tool', indexController.postCreateTool);
     app.post('/dashboard/create/:tool/sensor', indexController.postCreateSensor);
     app.post('/dashboard/create/:tool/:sensor/container', indexController.postCreateContainerInSensor);
-    app.post('/dashboard/create/:tool/:sensor/subcribe', indexController.postCreateDataSubcribe);
     app.post('/dashboard/create', indexController.postCreate);
 
 

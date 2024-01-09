@@ -361,45 +361,6 @@ const postCreateContainerInSensor = async (req, res) => {
   }
 }
 
-/// create container data and descriptor in sensor ty=3
-const postCreateDataSubcribe= async (req, res) => {
-  try {
-    const { urlAPI, name } = req.body;
-    const { tool, sensor} = req.params;
-    
-    const bodyAddUrl = () =>{
-      if(urlAPI && Array.isArray(urlAPI)){
-        return urlAPI.map((value, index)=>`<nu>${value}</nu>`).join('');
-      }else{
-        return `<nu>${urlAPI}</nu>`;
-      }
-    }
-
-    const xmlBody =  `
-      <m2m:sub xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${name}">
-          ${bodyAddUrl()}
-          <nct>2</nct>
-      </m2m:sub>`
-    const headers = {
-      ...configServerOM2M.infoHost.headers,
-      'Content-Type': 'application/xml;ty=23',
-    };
-
-    const url = `${configServerOM2M.urlHost()}/${tool}/${sensor}/DATA`;
-    const dataText = await indexService.create(url, xmlBody, headers);
-    let data = {};
-    await parseString(dataText, function (err, result) {
-      if(err) throw err;
-      data = result;
-    });
-    // res.status(200).json({ data: data });
-    res.redirect('/');
-  } catch (error) {
-    console.log('error: ' + error.message);
-    res.redirect('?error=');
-  }
-}
-
 const deleteById = async (req, res) => {
   try {
     const { id } = req.params;
@@ -474,9 +435,6 @@ const postCreate = async (req, res) => {
   res.redirect('?');
 }
 
-const getCreateDataSubcribe = async (req, res) => {
-  res.render('dashboard/create_sensor_data_subcribe');
-}
 const getCreateSensorTool = async (req, res) => {
   res.render('dashboard/create_sensor_tool');
 }
@@ -494,8 +452,6 @@ module.exports = {
   getCreateTool,
   getCreateSensorTool,
   deleteQuery,
-  getCreateDataSubcribe,
-  postCreateDataSubcribe,
   getCreatePage,
   postCreate,
   getJsonApplication,

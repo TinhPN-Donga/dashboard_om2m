@@ -35,6 +35,7 @@ const routes = (app) => {
     app.post('/dashboard/create-tool', indexController.postCreateTool);
     app.post('/dashboard/create/:tool/sensor', indexController.postCreateSensor);
     app.post('/dashboard/create/:tool/:sensor/container', indexController.postCreateContainerInSensor);
+    app.post('/dashboard/create/:tool/:sensor/subcribe', indexController.postCreateDataSubcribe);
     app.post('/dashboard/create', indexController.postCreate);
 
 

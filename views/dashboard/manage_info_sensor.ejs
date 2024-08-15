@@ -73,7 +73,7 @@
                     <a
                       class="btn btn-danger"
                       style="color: white"
-                      onclick="confirmAndDelete(`<%= data.data[i]['id']%>`)"
+                      onclick="confirmAndDelete(`<%= data.data[i].id%>`)"
                       >Delete</a
                     >
                   </td>
@@ -88,7 +88,7 @@
             async function confirmAndDelete(id) {
               const isConfirmed = confirm("Do you want to delete data?");
               if (isConfirmed) {
-                const deleteUrl = `/delete/data/${id}`;
+                const deleteUrl = `/delete?id=${id}`;
                 alert(deleteUrl);
                 await fetch(deleteUrl, {
                   method: "DELETE",

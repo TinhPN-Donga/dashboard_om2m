@@ -1,10 +1,10 @@
 // const host = 'http://mn-cse.cntt-uda.site';
 const infoHost = {
     tool: 'IOT_TOOL_KIT_1',
-    uri: '~/mn-cse/mn-name',
+    uri: '~/mn-cse',
     uriById: (id)=>`~/mn-cse/${id}`,
     // host: 'http://mn-cse.cntt-uda.site',
-    host: 'http://192.168.6.21:8282',
+    host: 'https://mncse.cntt-uda.site',
     headers: {
         "Content-Type": "application/json",
         "x-m2m-origin": "admin:admin",

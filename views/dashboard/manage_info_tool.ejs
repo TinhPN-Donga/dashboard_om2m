@@ -34,11 +34,11 @@
                                                     <%= data[i].name%>
                                                 </td>
                                                 <td class="text-center">
-                                                    <a class="btn btn-primary" href="/info/<%=title%>/<%=data[i].name%>">View</a>
+                                                    <a class="btn btn-primary" href="/info/<%=title%>/<%=data[i].id%>">View</a>
                                                 </td>
                                                 <td class=" text-center">
                                                     <input type="checkbox" name="vehicle3" value="<%= data[i].name%>">
-                                                    <a class="btn btn-danger disabled" id="<%= data[i].name%>" onclick="confirmAndDelete(`<%=title%>`,`<%=data[i].name%>`)" href="">Delete</a>
+                                                    <a class="btn btn-danger disabled" id="<%= data[i].name%>" onclick="confirmAndDelete(`<%=data[i].id%>`)" href="">Delete</a>
                                                 </td>
                                             </tr>
                                             <%}%>
@@ -54,10 +54,10 @@
         <footer class="footer text-center"> 2021 © Admin brought </footer>
     </div>
     <script>
-        function confirmAndDelete(tool, sensor) {
+        function confirmAndDelete(id) {
             const isConfirmed = confirm('Do you want to delete this?');
             if (isConfirmed) {
-                const deleteUrl = `/delete?tool=${tool}&sensor=${sensor}`;
+                const deleteUrl = `/delete?id=${id}`;
                 fetch(deleteUrl, {
                     method: 'DELETE',
                     headers: {

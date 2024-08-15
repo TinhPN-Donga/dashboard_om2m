@@ -94,17 +94,17 @@ const getSensorTool = async (req, res) => {
     const { tool, sensor } = req.params;
     const { skip } = req.query;
     console.log(!Number.isInteger(skip));
-    console.log(typeof skip);
     if (skip && (isNaN(skip) || !Number.isInteger(parseInt(skip)) || skip <= 0)) {
       return res.redirect(`/info/${tool}/${sensor}`);
     }
 
     var resultData = {};
-    var data = await indexService.findInfo(tool, sensor);
+    var data = await indexService.findById(sensor);
     const cntData = data['m2m:cnt'];
     resultData.name = cntData.rn;
     resultData.data = [];
     resultData.description = {};
+    console.log('data ', data['m2m:cnt']['m2m:cin']);
 
     const splitRi = cntData.ri.split('/');
     if (splitRi.length > 0) {
@@ -113,68 +113,78 @@ const getSensorTool = async (req, res) => {
       resultData.id = splitRi[0];
     }
 
-    const containerCnt = cntData["m2m:cnt"];
-    if (containerCnt && Array.isArray(containerCnt)) {
-      for (c of containerCnt) {
-        if (c.rn == 'DATA') {
-          const dataC = c['m2m:cin'];
-          resultData.data = [];
-          if (!dataC || dataC.length == 0) {
-
-          } else {
-            const listData = [];
-            count = dataC.length;
-            dataC.reverse();
-            if (dataC.length <= limit) {
-              for (let cin of dataC) {
-                let newData = handleData(cin);
-                listData.push(newData);
-              }
-            } else {
-              let isFinal = false;
-              if (skip) {
-                if (skip * limit > dataC.length) {
-                  if ((skip - 1) * limit <= dataC.length) {
-                    isFinal = true;
-                    skipAdd = skip;
-                  } else {
-                    skipAdd = 1;
-                  }
-                } else {
-                  if (skip <= 0) skipAdd = 1;
-                  skipAdd = skip;
-                }
-              }
-              for (let i = (skipAdd - 1) * limit; i < skipAdd * limit; i++) {
-                if (dataC[i]) {
-                  let newData = handleData(dataC[i]);
-                  listData.push(newData);
-                }
-              }
-            }
-            resultData.data = listData;
-          }
-        } else {
-          const dataC = c['m2m:cin'];
-          if (!dataC || dataC.length == 0) {
-            resultData.description = {};
-          } else {
-            parseString(dataC[0].con, function (err, result) {
-              resultData.description = {};
-              const strResult = result.obj.str;
-              for (let d of strResult) {
-                resultData.description[d['$'].name] = d['$'].val;
-              }
-            });
-          }
-
-        }
-      }
+    if(data['m2m:cnt']['m2m:cin']){
+      const cin = data['m2m:cnt']['m2m:cin'];
+      cin.forEach((e, i)=>{
+        let newData = {}
+        newData.createdAt = formatDate.formatDate(e.ct);
+        const idRi = e.ri.split('/');
+        newData.id = idRi[idRi.length-1]
+        newData.data = e.con
+        resultData.data = [...resultData.data, newData]
+      })
     }
+    
+    // const containerCnt = cntData["m2m:cnt"];
+    // if (containerCnt && Array.isArray(containerCnt)) {
+    //   for (c of containerCnt) {
+    //     if (c.rn == 'DATA') {
+    //       const dataC = c['m2m:cin'];
+    //       resultData.data = [];
+    //       if (!dataC || dataC.length == 0) {
+
+    //       } else {
+    //         const listData = [];
+    //         count = dataC.length;
+    //         dataC.reverse();
+    //         if (dataC.length <= limit) {
+    //           for (let cin of dataC) {
+    //             let newData = handleData(cin);
+    //             listData.push(newData);
+    //           }
+    //         } else {
+    //           let isFinal = false;
+    //           if (skip) {
+    //             if (skip * limit > dataC.length) {
+    //               if ((skip - 1) * limit <= dataC.length) {
+    //                 isFinal = true;
+    //                 skipAdd = skip;
+    //               } else {
+    //                 skipAdd = 1;
+    //               }
+    //             } else {
+    //               if (skip <= 0) skipAdd = 1;
+    //               skipAdd = skip;
+    //             }
+    //           }
+    //           for (let i = (skipAdd - 1) * limit; i < skipAdd * limit; i++) {
+    //             if (dataC[i]) {
+    //               let newData = handleData(dataC[i]);
+    //               listData.push(newData);
+    //             }
+    //           }
+    //         }
+    //         resultData.data = listData;
+    //       }
+    //     } else {
+    //       const dataC = c['m2m:cin'];
+    //       if (!dataC || dataC.length == 0) {
+    //         resultData.description = {};
+    //       } else {
+    //         parseString(dataC[0].con, function (err, result) {
+    //           resultData.description = {};
+    //           const strResult = result.obj.str;
+    //           for (let d of strResult) {
+    //             resultData.description[d['$'].name] = d['$'].val;
+    //           }
+    //         });
+    //       }
+    //     }
+    //   }
+    // }
     res.render('dashboard/manage_info_sensor', { title: tool, sensor, data: resultData, skip: skipAdd, count, countPaginate: Math.ceil(count / limit) });
   } catch (error) {
     res.redirect('/');
-    // res.status(500).json({ message: error.message });
   }
 }
 
@@ -251,41 +261,30 @@ function handleData(cin) {
 const getInfoTool = async (req, res) => {
   try {
     const { tool } = req.params;
+    let title = tool
     var listTitleSensor = [];
-    var data = await indexService.findInfo(tool, '', 'ty=3&fu=1');
+    var data = await indexService.findInfo(tool, '', 'rcn=4');
     if (!data || data.length === 0) {
       console.log('No Data');
     } else {
-      var uril = data['m2m:uril'];
-      if (!uril) {
-      } else {
-        for (var s of uril) {
-          const splitUri = s.split('/');
-          if (tool != splitUri[3]) continue;
-          let newData = {
-            name: splitUri[4],
-            data: splitUri[5] ? [splitUri[5]] : [],
+      console.log('data ',data);
+      const dataCNT = data['m2m:ae']['m2m:cnt'];
+      if(dataCNT){
+        console.log('m2m:cnt ',data['m2m:ae']['m2m:cnt']);
+        title = data.rn;
+        dataCNT.forEach((e, i)=>{
+          const splitRi = e.ri.split('/');
+          const addNewData = {
+            name: e.rn,
+            id: splitRi[splitRi.length - 1]
           }
-
-          let index = -1;
-          listTitleSensor.forEach((value, i) => {
-            if (value.name === splitUri[4]) {
-              index = i;
-            }
-          });
-
-          if (index != -1) {
-            listTitleSensor[index].data.push(splitUri[5]);
-          } else {
-            listTitleSensor.push(newData);
-          }
-        }
+          listTitleSensor.push(addNewData)
+        })
       }
     }
     res.render('dashboard/manage_info_tool.ejs', { title: tool, data: listTitleSensor });
   } catch (error) {
     res.redirect('/');
-    // res.status(500).json({ message: error.message });
   }
 }
 
@@ -315,12 +314,13 @@ const getAllData = async (req, res) => {
 const getDataTool = async (req, res) => {
   try {
     var listName = [];
-    var data = await indexService.getDataMN();
-    const listAe = data["m2m:uril"];
+    var data = await indexService.findInfo();
+    const listAe = data["m2m:cb"]["m2m:ae"];
     for (let e of listAe) {
       let newData = {};
-      const splitRi = e.split('/');
-      newData.name = splitRi[splitRi.length - 1];
+      newData.name = e.rn;
+      const splitRi = e.ri.split('/');
+      newData.id = splitRi[splitRi.length - 1];
       listName.push(newData);
     }
     res.render('dashboard/index', { data: listName });
@@ -328,6 +328,23 @@ const getDataTool = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// const getDataTool = async (req, res) => {
+//   try {
+//     var listName = [];
+//     var data = await indexService.getDataMN();
+//     const listAe = data["m2m:uril"];
+//     for (let e of listAe) {
+//       let newData = {};
+//       const splitRi = e.split('/');
+//       newData.name = splitRi[splitRi.length - 1];
+//       listName.push(newData);
+//     }
+//     res.render('dashboard/index', { data: listName });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// };
 
 const getAllDataOl = async (req, res) => {
   try {
@@ -346,7 +363,6 @@ const getAllDataOl = async (req, res) => {
     res.status(200).json({ listDataDHT });
   } catch (error) {
     res.redirect('/');
-    // res.status(500).json({ message: error.message });
   }
 };
 
@@ -367,12 +383,8 @@ const getAllDataLa = async (req, res) => {
     res.status(200).json({ listDataDHT });
   } catch (error) {
     res.redirect('/');
-    // res.status(500).json({ message: error.message });
   }
 };
-
-
-// create
 
 // create tool ty = 2
 const postCreateTool = async (req, res) => {
@@ -396,15 +408,14 @@ const postCreateTool = async (req, res) => {
     let data = {};
     await parseString(xmlTextResult, function (err, result) {
       data = result;
-      throw err;
+      if(err) throw err;
     });
     if (!data) throw new Error('Error !!!');
-    res.redirect('dashboard');
+    res.redirect('/dashboard');
   } catch (error) {
     console.log(error.message);
     const messageError = '';
     res.redirect(`?error=${error.message}`);
-    // res.status(500).json({ message: error.message });
   }
 }
 
@@ -439,13 +450,10 @@ const postCreateSensor = async (req, res) => {
       });
     };
     res.redirect(`/info/${tool}`);
-    // res.status(200).json({ data: data });
   } catch (error) {
     res.redirect(`?error=${error}`);
-    // res.status(500).json({ message: error.message });
   }
 }
-
 
 ///Funtion create descriptor and data in sensor
 async function createDescriptionAndData(nameData, tool, sensor){
@@ -539,11 +547,8 @@ const deleteById = async (req, res) => {
 
 const deleteQuery = async (req, res) => {
   try {
-    const {tool, sensor} = req.query;
-    if(!tool){
-      throw new Error('Tool not empty!!!');
-    }
-    const uri = `${tool ? '/'+tool: ''}${sensor ? '/'+sensor: ''}` ;
+    const {id} = req.query;
+    const uri = `${id ? '/'+id: ''}` ;
     console.log(`uri: ${uri}`);
     let fetchApi = await indexService.deleteQuery(uri);
     if(fetchApi){

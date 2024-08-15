@@ -28,8 +28,17 @@ const findInfo = async (tool = '', sensor = '', queryData = 'rcn=4') => {
     return data.json();
 }
 
+const findById = async (id) => {
+    const url = `${configServerOM2M.infoHost.host}/${configServerOM2M.infoHost.uriById(id)}?rcn=4`;
+    const data = await fetch(url, {
+        headers: configServerOM2M.infoHost.headers,
+    });
+    return data.json();
+}
+
 const getDataMN = async () => {
-    const data = await fetch(`${configServerOM2M.urlHost()}?ty=2&fu=1`, {
+    const url = `${configServerOM2M.urlHost()}?ty=2&fu=1`;
+    const data = await fetch(url, {
         headers: configServerOM2M.infoHost.headers,
     });
     return data.json();
@@ -78,6 +87,7 @@ const update = () => {
 }
 
 module.exports = {
+    findById,
     getAllData,
     getFirstData,
     getLastData,

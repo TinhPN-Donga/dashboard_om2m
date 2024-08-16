@@ -65,7 +65,7 @@
               <tbody>
                 <%for(let i=0; i < data.data.length; i++){%>
                 <tr>
-                  <td class="txt-oflo"><%= i+1%></td>
+                  <td class="txt-oflo"><%= ((skip-1) * limit)+(i + 1)%></td>
                   <%for(let k in data.data[i]){%>
                   <td class="txt-oflo"><%= data.data[i][k]%></td>
                   <%}%>
@@ -97,15 +97,12 @@
                   },
                 })
                   .then((response) => {
-                    alert(response.data);
                     if (response.ok) {
                       window.location.reload();
                     } else {
-                      alert("Delete  failed!!!");
                     }
                   })
                   .catch((error) => {
-                    alert("Delete failed!!!");
                   });
               }
             }
@@ -147,7 +144,7 @@
             <%}%> <%}%> <%if(skip < countPaginate){%>
             <a
               class="p-1"
-              href="/info/<%=title%>/<%=sensor%>?skip=<%= skip + 1%>"
+              href="/info/<%=title%>/<%=sensor%>?skip=<%= parseInt(skip) + 1%>"
             >
               >
             </a>
@@ -163,11 +160,44 @@
           <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
             <h4 class="page-title" style="font-weight: bold">Subcribe Notify</h4>
           </div>
-          <a href="/dashboard/create/<%=title%>/<%=sensor%>/subcribe">+ Create new data subscribe</a>
-          <%if(!Object.keys(data.description).length){%>
+          <%if(!data.sub.length){%>
             <h4 class="page-title">No data</h4>
           <%}else{%>
-            
+            <div class="table-responsive">
+            <table class="table no-wrap">
+              <thead>
+                <tr>
+                  <th class="border-top-0">#</th>
+                  <th class="border-top-0">ID</th>
+                  <th class="border-top-0">Name</th>
+                  <th class="border-top-0">URL notify</th>
+                  <th class="border-top-0 text-center">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <%for(let i = 0; i < data.sub.length; i++){%>
+                <tr>
+                  <td class="txt-oflo"><%= ((skip-1) * limit)+(i + 1)%></td>
+                  <td class="txt-oflo"><%= data.sub[i].id%></td>
+                  <td class="txt-oflo"><%= data.sub[i].name%></td>
+                  <td class="txt-oflo">
+                    <%for(let value of data.sub[i].listUrl){%>
+                      <a href="<%=value%>"><%=value%></a><br>
+                    <%}%>
+                  </td>
+                  <td class="text-center">
+                    <a
+                      class="btn btn-danger"
+                      style="color: white"
+                      onclick="confirmAndDelete(`<%= data.sub[i].id%>`)"
+                      >Delete</a
+                    >
+                  </td>
+                </tr>
+                <%}%>
+              </tbody>
+            </table>
+          </div>
           <%}%>
         </div>
       </div>

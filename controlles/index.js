@@ -1,17 +1,8 @@
-const { response } = require("express");
 const configServerOM2M = require("../utils/config_om2m");
 const formatDate = require("../utils/format_date");
 var parseString = require('xml2js').parseString;
 const indexService = require('../services/index');
 const { v4: uuidv4 } = require('uuid');
-
-class DataDHT {
-  constructor(temp, humi, createdAt) {
-    this.temp = temp;
-    this.humi = humi;
-    this.createdAt = createdAt;
-  }
-}
 
 const getSensorData = async (req, res) => {
   let limit = 100;
@@ -20,32 +11,17 @@ const getSensorData = async (req, res) => {
     const { tool, sensor } = req.params;
     const { skip } = req.query;
     let resultListData = [];
-    var data = await indexService.findInfo(tool, sensor, 'DATA');
+    var data = await indexService.findInfo(tool, `${sensor}/DATA`);
     const cntData = data['m2m:cnt'];
     const listData = cntData["m2m:cin"];
     if (listData.length <= 100) {
-      for (let cin of listData) {
-        parseString(cin.con, function (err, result) {
-          const listInt = result.obj.int;
-          const listBool = result.obj.bool;
-          const newListInt = [];
-          let newContentData = {};
-          newContentData.id = cin.rn.split('_').join('-');
-          for (let intObj of listInt) {
-            newContentData[intObj['$'].name] = intObj['$'].val;
-            newListInt.push(intObj['$']);
-          }
-          if (listBool && listBool.length > 0) {
-            newContentData[listBool[0]['$'].name] = listBool[0]['$'].val;
-            newListInt.push(listBool[0]['$']);
-          }
-          newContentData.createdAt = formatDate.formatDate(cin.ct);
-          resultListData.push(newContentData);
-        });
-      }
+      let listMapData = listData.map((value, index)=> handleData(value));
+      resultListData = listMapData;
     } else {
       let skipAdd = 1;
+      // check skip is not empty
       if (skip) {
+        // check count current < length data
         if (skip * limit > listData.length) {
           if ((skip - 1) * limit <= listData.length) {
             skipAdd = skip;
@@ -56,32 +32,17 @@ const getSensorData = async (req, res) => {
           skipAdd = skip;
         }
       }
-      for (let i = (skipAdd - 1) * limit; i <= skipAdd * limit; i++) {
-        parseString(listData[i].con, function (err, result) {
-          const listInt = result.obj.int;
-          const listBool = result.obj.bool;
-          const newListInt = [];
-          let newContentData = {};
-          newContentData.id = listData[i].rn.split('_').join('-');
-          for (let intObj of listInt) {
-            newContentData[intObj['$'].name] = intObj['$'].val;
-            newListInt.push(intObj['$']);
-          }
-          if (listBool && listBool.length > 0) {
-            newContentData[listBool[0]['$'].name] = listBool[0]['$'].val;
-            newListInt.push(listBool[0]['$']);
-          }
-          newContentData.createdAt = formatDate.formatDate(listData[i].ct);
-          resultListData.push(newContentData);
-        });
-      }
+      let start = dataC.length - ((skipAdd > 0 ? skipAdd : skipAdd + 1)*limit);
+      let end = dataC.length - ((skipAdd > 0 ? skipAdd - 1: skipAdd)*limit);
+      let spliceDataLimit = dataC.slice(start < 0 ? 0: start, end > dataC.length ? dataC.length : end);
+      let listMapData = spliceDataLimit.map((value, index)=> handleData(value));
+      resultListData = listMapData;
     }
 
-    res.json(resultListData);
-
+    res.status(200).json(resultListData);
   } catch (error) {
-    res.redirect('/');
-    // res.status(500).json({ message: error.message });
+    // res.redirect('/');
+    res.status(500).json({ message: error.message });
 
   }
 }
@@ -106,6 +67,7 @@ const getSensorTool = async (req, res) => {
     resultData.description = {};
     console.log('data ', data['m2m:cnt']['m2m:cin']);
 
+    /// split get id
     const splitRi = cntData.ri.split('/');
     if (splitRi.length > 0) {
       resultData.id = splitRi[splitRi.length - 1];
@@ -234,28 +196,16 @@ const getInfoDataSensor = async (req, res) => {
 }
 
 function handleData(cin) {
-  let newContentData = {};
-  parseString(cin.con, function (err, result) {
-    const listInt = result.obj.int ? result.obj.int : [];
-    const listBool = result.obj.bool ? result.obj.bool : [];
-    const listStr = result.obj.str ? result.obj.str : [];
-    const newListInt = [];
-    newContentData.id = cin.rn.split('_').join('-');
-    for (let intObj of listInt) {
-      newContentData[intObj['$'].name] = intObj['$'].val;
-      newListInt.push(intObj['$']);
-    }
-    if (listBool && listBool.length > 0) {
-      newContentData[listBool[0]['$'].name] = listBool[0]['$'].val;
-      newListInt.push(listBool[0]['$']);
-    }
-    if (listStr && listStr.length > 0) {
-      newContentData[listStr[0]['$'].name] = listStr[0]['$'].val;
-      newListInt.push(listStr[0]['$']);
-    }
-    newContentData.createdAt = formatDate.formatDate(cin.ct);
-  });
-  return newContentData;
+  const newContentDataObject = {};
+  newContentDataObject.id = cin.rn.replace('_','-');
+  newContentDataObject.ct = cin.ct;
+  const intnameArray= cin.con.split('"');
+  for (let index = 1; index < intnameArray.length; index+=4) {
+    const keyname = intnameArray[index];
+    newContentDataObject[keyname] = intnameArray[index+2];
+  }
+  newContentDataObject.createdAt = formatDate.formatDate(cin.ct);
+  return newContentDataObject;
 }
 
 const getInfoTool = async (req, res) => {
@@ -288,28 +238,6 @@ const getInfoTool = async (req, res) => {
   }
 }
 
-const getAllData = async (req, res) => {
-  try {
-    var listDataDHT = [];
-    var data = await indexService.getAllData();
-    const listData = data["m2m:cnt"]["m2m:cin"];
-    for (var i of listData) {
-      parseString(i.con, function (err, result) {
-        listDataDHT.push(
-          new DataDHT(
-            result.obj.int[0]["$"].val,
-            result.obj.int[1]["$"].val,
-            formatDate.formatDate(i.ct)
-          )
-        );
-      });
-    }
-    res.status(200).json({ listDataDHT });
-  } catch (error) {
-    res.redirect('/');
-    // res.status(500).json({ message: error.message });
-  }
-};
 
 const getDataTool = async (req, res) => {
   try {
@@ -322,7 +250,8 @@ const getDataTool = async (req, res) => {
       const splitRi = e.ri.split('/');
       newData.id = splitRi[splitRi.length - 1];
       listName.push(newData);
-    }
+      return newData;
+    };
     res.render('dashboard/index', { data: listName });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -348,39 +277,49 @@ const getDataTool = async (req, res) => {
 
 const getAllDataOl = async (req, res) => {
   try {
-    var listDataDHT = [];
-    var data = await indexService.getFirstData();
-    const dataCin = data["m2m:cin"];
-    parseString(dataCin.con, function (err, result) {
-      listDataDHT.push(
-        new DataDHT(
-          result.obj.int[0]["$"].val,
-          result.obj.int[1]["$"].val,
-          formatDate.formatDate(dataCin.ct)
-        )
-      );
+    var data = await indexService.getDataMN();
+    const listAe = data["m2m:uril"];
+    let mapData = listAe.map((value, index)=>{
+      const splitRi = value.split('/');
+      const name = splitRi[splitRi.length - 1];
+      return name;
     });
-    res.status(200).json({ listDataDHT });
+    res.status(200).json({data: mapData });
   } catch (error) {
     res.redirect('/');
   }
 };
 
-const getAllDataLa = async (req, res) => {
+const getJsonSensor = async (req, res) => {
   try {
-    var listDataDHT = [];
-    var data = await indexService.getLastData();
-    const dataCin = data["m2m:cin"];
-    parseString(dataCin.con, function (err, result) {
-      listDataDHT.push(
-        new DataDHT(
-          result.obj.int[0]["$"].val,
-          result.obj.int[1]["$"].val,
-          formatDate.formatDate(dataCin.ct)
-        )
-      );
-    });
-    res.status(200).json({ listDataDHT });
+    const { tool } = req.params;
+    var listTitleSensor = [];
+    var data = await indexService.findInfo(tool, '', 'ty=3&fu=1');
+    if (!data || data.length === 0) {
+      console.log('No Data');
+    } else {
+      var uril = data['m2m:uril'];
+      if (!uril) {
+      } else {
+        uril.forEach((s, i)=>{
+          const splitUri = s.split('/');
+          if (tool != splitUri[3]) return;
+          let newData = {
+            name: splitUri[4],
+            data: splitUri[5] ? [splitUri[5]] : [],
+          }
+
+          let index = listTitleSensor.findIndex((element)=> element.name === splitUri[4]);
+
+          if (index != -1) {
+            listTitleSensor[index].data.push(splitUri[5]);
+          } else {
+            listTitleSensor.push(newData);
+          }
+        });
+      }
+    }
+    res.status(200).json({data: listTitleSensor });
   } catch (error) {
     res.redirect('/');
   }
@@ -414,23 +353,18 @@ const postCreateTool = async (req, res) => {
     res.redirect('/dashboard');
   } catch (error) {
     console.log(error.message);
-    const messageError = '';
     res.redirect(`?error=${error.message}`);
   }
 }
 
 /// create sensor in tool ty=3
 const postCreateSensor = async (req, res) => {
-
-  const arrBody = ['Descriptor','Data'];
-
+  const arrBody = ['DESCRIPTOR','DATA'];
   try {
     const { name } = req.body;
     const { tool } = req.params;
     if(!name) throw new Error('Name required');
-    const xmlBody = `<m2m:cnt xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${name}">
-
-    </m2m:cnt>`;
+    const xmlBody = `<m2m:cnt xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${name}"></m2m:cnt>`;
     const headers = {
       ...configServerOM2M.infoHost.headers,
       'Content-Type': 'application/xml;ty=3',
@@ -457,8 +391,7 @@ const postCreateSensor = async (req, res) => {
 
 ///Funtion create descriptor and data in sensor
 async function createDescriptionAndData(nameData, tool, sensor){
-  const xmlBody = `<m2m:cnt xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${nameData}">
-    </m2m:cnt>`;
+  const xmlBody = `<m2m:cnt xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${nameData}"></m2m:cnt>`;
     const headers = {
       ...configServerOM2M.infoHost.headers,
       'Content-Type': 'application/xml;ty=3',
@@ -468,6 +401,7 @@ async function createDescriptionAndData(nameData, tool, sensor){
     const dataText = await indexService.create(url, xmlBody, headers);
     return dataText;
 }
+
 
 /// create container data and descriptor in sensor ty=3
 const postCreateContainerInSensor = async (req, res) => {
@@ -488,27 +422,32 @@ const postCreateContainerInSensor = async (req, res) => {
       data = result;
     });
     if (!data) throw new Error('Error !!!');
-    res.status(200).json({ data: data });
-  } catch (error) {
     res.redirect('/');
+    // res.status(200).json({ data: data });
+  } catch (error) {
+    res.redirect('?error=');
   }
 }
 
 /// create container data and descriptor in sensor ty=3
 const postCreateDataSubcribe= async (req, res) => {
   try {
-    const { urlAPI, title } = req.body;
+    const { urlAPI, name } = req.body;
     const { tool, sensor} = req.params;
-    // const xmlBody = `<m2m:cnt xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${title}">
-    //   <nu>${urlAPI}</nu>
-    //   <nct>2</nct>
-    // </m2m:cnt>`;
+    
+    const bodyAddUrl = () =>{
+      if(urlAPI && Array.isArray(urlAPI)){
+        return urlAPI.map((value, index)=>`<nu>${value}</nu>`).join('');
+      }else{
+        return `<nu>${urlAPI}</nu>`;
+      }
+    }
+
     const xmlBody =  `
-    <m2m:sub xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${title}">
-        <nu>${urlAPI}</nu>
-        <nct>2</nct>
-    </m2m:sub>
-    `
+      <m2m:sub xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${name}">
+          ${bodyAddUrl()}
+          <nct>2</nct>
+      </m2m:sub>`
     const headers = {
       ...configServerOM2M.infoHost.headers,
       'Content-Type': 'application/xml;ty=23',
@@ -516,23 +455,21 @@ const postCreateDataSubcribe= async (req, res) => {
 
     const url = `${configServerOM2M.urlHost()}/${tool}/${sensor}/DATA`;
     const dataText = await indexService.create(url, xmlBody, headers);
-    console.log(`dataText: ${dataText}`);
     let data = {};
     await parseString(dataText, function (err, result) {
       if(err) throw err;
       data = result;
     });
-    // if (!data) throw new Error('Error !!!');
-    res.status(200).json({ data: data });
+    // res.status(200).json({ data: data });
+    res.redirect('/');
   } catch (error) {
-    // res.redirect('/');
     console.log('error: ' + error.message);
+    res.redirect('?error=');
   }
 }
 
 const deleteById = async (req, res) => {
   try {
-    console.log('req.originalUrl',req.originalUrl);
     const { id } = req.params;
     let fetchApi = await indexService.deleteById(id);
     if(fetchApi){
@@ -566,30 +503,62 @@ const getCreateTool = async (req, res) => {
   res.render('dashboard/create_tool');
 }
 
-const getCreateDataSubcribe = async (req, res) => {
-  res.render('dashboard/create_sensor_data_subcribe');
+const getCreatePage = async (req, res) => {
+  res.render('dashboard/create_page');
 }
+
+const postCreate = async (req, res) => {
+  console.log('test 123456');
+  const {method} = req.body;
+  console.log('method',method);
+  switch (method) {
+    case '1': {
+      console.log(req.body);
+      return postCreateTool(req, res);
+    };
+    case '2': {
+      const {application, name} = req.body;
+      req.params.tool = application;
+      return postCreateSensor(req, res);
+    };
+    case '3': {
+      const {application, sensor, title} = req.body;
+      req.params.tool = application;
+      req.params.sensor = sensor;
+      return postCreateContainerInSensor(req, res);
+    };
+    case '4': {
+      console.log(req.body);
+      const {application, sensor} = req.body;
+      req.params.tool = application;
+      req.params.sensor = sensor;
+      return postCreateDataSubcribe(req, res);
+    }
+    default:
+      break;
+  }
+  res.redirect('?');
+}
+
 const getCreateSensorTool = async (req, res) => {
   res.render('dashboard/create_sensor_tool');
 }
 
 
 module.exports = {
-  getAllData,
   getSensorTool,
-  getAllDataLa,
-  getAllDataOl,
   getDataTool,
   getInfoTool,
   getSensorData,
   postCreateTool,
   postCreateSensor,
   postCreateContainerInSensor,
-  getInfoDataSensor,
   deleteById,
   getCreateTool,
   getCreateSensorTool,
   deleteQuery,
-  getCreateDataSubcribe,
-  postCreateDataSubcribe
+  postCreateDataSubcribe,
+  getCreatePage,
+  postCreate,
+  getJsonSensor,
 };

@@ -73,12 +73,12 @@
             if (selectTool) {
                 let data = await fetchApi('/api/application');
                 if (data && data.length > 0) {
-                    valueApplication = data[0].name;
+                    valueApplication = data[0].id;
                 }
                 const htmlOptionApplication = () => {
                     let html = '';
                     for (let i = 0; i < data.length; i++) {
-                        html += `<option value="${data[i]}"  ${i == 0 ? "selected" : ""}>${data[i]}</option>`;
+                        html += `<option value="${data[i].id}"  ${i == 0 ? "selected" : ""}>${data[i].name}</option>`;
                     }
                     return html;
                 }
@@ -92,7 +92,7 @@
                         const htmlOptionApplication = () => {
                             let html = '';
                             for (let i = 0; i < resSensor.length; i++) {
-                                html += `<option value="${resSensor[i].name}"  ${i == 0 ? "selected" : ""}>${resSensor[i].name}</option>`;
+                                html += `<option value="${resSensor[i].id}"  ${i == 0 ? "selected" : ""}>${resSensor[i].name}</option>`;
                             }
                             return html;
                         }
@@ -103,10 +103,11 @@
 
             if (selectSensor) {
                 let resSensor = await fetchApi(`/api/${valueApplication}/sensor`);
+                console.log(`resSensor`,resSensor);
                 const htmlOptionApplication = () => {
                     let html = '';
                     for (let i = 0; i < resSensor.length; i++) {
-                        html += `<option value="${resSensor[i].name}"  ${i == 0 ? "selected" : ""}>${resSensor[i].name}</option>`;
+                        html += `<option value="${resSensor[i].id}"  ${i == 0 ? "selected" : ""}>${resSensor[i].name}</option>`;
                     }
                     return html;
                 }
@@ -168,7 +169,6 @@
         }
 
          function getHtmlFormCreateContainer() {
-
             return `
                         <form action="" method="POST">
                             <input type="hidden" name="method" value="3">
@@ -178,7 +178,7 @@
                                 </select>
                             </div>
                             <div class="form-group">
-                                <label for="titleSensor">Select tool</label>
+                                <label for="titleSensor">Select container</label>
                                 <select class="form-select" name="sensor" id="select-sensor" aria-label="Select Sensor" required></select>
                             </div>
                             <div class="form-group">

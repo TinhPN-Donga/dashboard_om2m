@@ -1,0 +1,113 @@
+body,p{
+        margin: 0;
+        padding: 0;
+    }
+a{
+    text-decoration: none;
+}
+.wrapper{
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.bg-card{
+    width: 60rem;
+    border-radius: 5px;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+}
+
+.card-left{
+    width: 33rem;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.form{
+    width: 27rem;
+    padding: 3.5rem 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0px 5px 15px rgba(0, 0, 0, 0.1);
+    border: none;
+}
+
+.form-group{
+    width: 100%!important;
+    padding-top: 0.8rem;
+}
+input.input{
+    width: 100%!important;
+    border: none!important;
+    padding: 0.7rem;
+    border-radius: 5px;
+    background-color: #d6efff;
+    color: #5e6278;
+}
+button[type = "submit"]{
+    width: 100%;
+    padding: 0.5rem;
+}
+.form-login{
+    width: 100%;
+}
+label{
+    padding: 0.4rem 0;
+    font-weight: 500;
+}
+.action_remember_forgot{
+    padding-top: 0.5rem;
+    display: flex;
+    justify-content: space-between;
+}
+#error{
+    display: none;
+    width: 100%;
+    background-color: #fcd9e2;
+    border-radius: 7px;
+}
+#error #error_message{
+    color: #912741;
+    font-size: 13px;
+    padding: 0.8rem;
+}
+
+.showMessage{
+    display: block!important;
+}
+
+.saved{
+    display: flex;
+    cursor: pointer;
+}
+
+input[type='checkbox']{
+    margin-right: 5px;
+}
+
+@media only screen and (max-width: 600px) {
+    .form{
+        width: 24rem;
+        padding: 3rem 2rem;
+    }
+    a, label{
+        font-size: 12px;
+    }
+    .form-group{
+        padding-top: 0.5rem;
+    }
+
+}
+@media only screen and (max-width: 400px) {
+    .form{
+        width: 20rem;
+  }
+}
+
+.saved-info{
+    cursor: pointer;
+}

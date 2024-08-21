@@ -1,21 +1,6 @@
-// const host = 'http://mn-cse.cntt-uda.site';
-// const infoHost = {
-//     tool: 'IOT_TOOL_KIT_1',
-//     uri: '~/mn2-cse/mn2-name',
-//     uriById: (id)=>`~/mn-cse/${id}`,
-//     // host: 'http://mn-cse.cntt-uda.site',
-//     host: 'http://192.168.6.21:8081',
-//     headers: {
-//         "Content-Type": "application/json",
-//         "x-m2m-origin": "admin:admin",
-//       },
-// }
-
 const infoHost = {
-    tool: 'IOT_TOOL_KIT_1',
     uri: '~/mn-cse',
     uriById: (id)=>`~/mn-cse/${id}`,
-    // host: 'http://mn-cse.cntt-uda.site',
     host: 'https://mncse.cntt-uda.site',
     headers: {
         "Content-Type": "application/json",

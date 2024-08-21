@@ -4,6 +4,7 @@ const formatDate = require("../utils/format_date");
 var parseString = require('xml2js').parseString;
 const indexService = require('../services/index');
 const { v4: uuidv4 } = require('uuid');
+const listDataDescription = ['Data','Description'];
 
 class DataDHT {
   constructor(temp, humi, createdAt) {
@@ -306,7 +307,7 @@ function handleData(cin) {
 const getInfoTool = async (req, res) => {
   try {
     const { tool } = req.params;
-    let title = tool
+    var title = tool
     var listTitleSensor = [];
     var data = await indexService.findInfo(tool, '', 'rcn=4');
     if (!data || data.length === 0) {
@@ -374,23 +375,6 @@ const getDataTool = async (req, res) => {
   }
 };
 
-// const getDataTool = async (req, res) => {
-//   try {
-//     var listName = [];
-//     var data = await indexService.getDataMN();
-//     const listAe = data["m2m:uril"];
-//     for (let e of listAe) {
-//       let newData = {};
-//       const splitRi = e.split('/');
-//       newData.name = splitRi[splitRi.length - 1];
-//       listName.push(newData);
-//     }
-//     res.render('dashboard/index', { data: listName });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// };
-
 const getAllDataOl = async (req, res) => {
   try {
     var listDataDHT = [];
@@ -431,86 +415,108 @@ const getAllDataLa = async (req, res) => {
   }
 };
 
-// create tool ty = 2
-const postCreateTool = async (req, res) => {
+// create application ty = 2
+const postCreateApplication = async (req, res) => {
   try {
     const { name, label } = req.body;
     if(!name || !label) throw new Error('name sensor and label must be provided');
     const randomId = uuidv4();
-    const xmlBody = `
-        <m2m:ae xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${name}" >
-          <api>${randomId}</api>
-          <lbl>${label}</lbl>
-          <rr>false</rr>
-      </m2m:ae>
-    `;
+
+    const body = {
+      "m2m:ae":{
+          "rn": name,
+          "lbl": [
+            label
+          ],
+          "rr": false,
+          "api": randomId
+      }
+  };
     const headers = {
       ...configServerOM2M.infoHost.headers,
-      'Content-Type': 'application/xml;ty=2',
+      'Content-Type': 'application/json;ty=2',
     };
     const url = configServerOM2M.urlHost();
-    const xmlTextResult = await indexService.create(url, xmlBody, headers);
-    let data = {};
-    await parseString(xmlTextResult, function (err, result) {
-      data = result;
-      if(err) throw err;
-    });
-    if (!data) throw new Error('Error !!!');
+    const resultData = await indexService.create(url, JSON.stringify(body), headers);
+   console.log('is true', !resultData);
+   
+    if (!resultData) throw new Error('Error !!!')
+    else{
+      const idNewData = resultData['m2m:ae'].aei;
+      console.log('idNewData',idNewData);
+      
+      for(let i of listDataDescription){
+        await createDescriptionAndData(i, idNewData);
+      }
+    }
     res.redirect('/dashboard');
   } catch (error) {
     console.log(error.message);
-    const messageError = '';
-    res.redirect(`?error=${error.message}`);
+    const messageError = 'Create data failed!(Name Application Entity invalid).';
+    res.redirect(`?error=${messageError}`);
   }
 }
 
 /// create sensor in tool ty=3
 const postCreateSensor = async (req, res) => {
-
-  const arrBody = ['Descriptor','Data'];
-
   try {
     const { name } = req.body;
     const { tool } = req.params;
     if(!name) throw new Error('Name required');
-    const xmlBody = `<m2m:cnt xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${name}">
-
-    </m2m:cnt>`;
+   
+    const body = {
+      "m2m:cnt":{
+        "rn": name,
+        "lbl": [
+            "Label-1",
+            "Label-2"
+        ],
+        "mni": 120
+      }
+    }
     const headers = {
       ...configServerOM2M.infoHost.headers,
-      'Content-Type': 'application/xml;ty=3',
+      'Content-Type': 'application/json;ty=3',
     };
     const url = `${configServerOM2M.urlHost()}/${tool}`;
-    const xmlTextResult = await indexService.create(url, xmlBody, headers);
-    let data = {};
-    await parseString(xmlTextResult, function (err, result) {
-      data = result;
+    console.log('url',url);
+    console.log('body',body);
+    console.log('headers',headers);
+    
+    await indexService.create(url, JSON.stringify(body), headers).then(e=>{
+      console.log('result data',e);
     });
-    if (!data){
-      throw new Error('Đã xảy ra lỗi!!!');
-    }else{
-      arrBody.forEach((value)=>{
-        const result = createDescriptionAndData(value, tool, name);
-        if(!result) throw new Error('Đã xảy ra lỗi!!!');
-      });
-    };
+    
     res.redirect(`/info/${tool}`);
   } catch (error) {
-    res.redirect(`?error=${error}`);
+    res.redirect(`?error=${error.message}`);
   }
 }
 
 ///Funtion create descriptor and data in sensor
-async function createDescriptionAndData(nameData, tool, sensor){
-  const xmlBody = `<m2m:cnt xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${nameData}">
-    </m2m:cnt>`;
+async function createDescriptionAndData(nameData, id){
+  // const xmlBody = `<m2m:cnt xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${nameData}">
+  //   </m2m:cnt>`;
+    const body = {
+      "m2m:cnt":{
+          "rn": nameData,
+          "lbl": [
+              "Label-1",
+              "Label-2"
+          ],
+          "mni": 120
+  
+      }
+  }
     const headers = {
       ...configServerOM2M.infoHost.headers,
-      'Content-Type': 'application/xml;ty=3',
+      'Content-Type': 'application/json;ty=3',
     };
 
-    const url = `${configServerOM2M.urlHost()}/${tool}/${sensor}`;
-    const dataText = await indexService.create(url, xmlBody, headers);
+    const url = `${configServerOM2M.urlHost()}/${id}`;
+    console.log('url',url,'- ', nameData);
+    
+    const dataText = await indexService.create(url, JSON.stringify(body), headers);
     return dataText;
 }
 
@@ -544,10 +550,6 @@ const postCreateDataSubcribe= async (req, res) => {
   try {
     const { urlAPI, title } = req.body;
     const { tool, sensor} = req.params;
-    // const xmlBody = `<m2m:cnt xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${title}">
-    //   <nu>${urlAPI}</nu>
-    //   <nct>2</nct>
-    // </m2m:cnt>`;
     const xmlBody =  `
     <m2m:sub xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${title}">
         <nu>${urlAPI}</nu>
@@ -580,7 +582,7 @@ const postCreate = async (req, res) => {
   switch (method) {
     case '1': {
       console.log(req.body);
-      return postCreateTool(req, res);
+      return postCreateApplication(req, res);
     };
     case '2': {
       const {application, name} = req.body;
@@ -658,7 +660,7 @@ module.exports = {
   getDataTool,
   getInfoTool,
   getSensorData,
-  postCreateTool,
+  postCreateApplication,
   postCreateSensor,
   postCreateContainerInSensor,
   getInfoDataSensor,

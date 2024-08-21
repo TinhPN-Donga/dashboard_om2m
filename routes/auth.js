@@ -5,18 +5,10 @@ const routes = (app) => {
         res.render('login/login_page');
     });
 
-    app.get('/logout',(req, res)=>{
-        if(req.cookies.user){
-            res.clearCookie('user');
-        }
-        res.redirect('/');
-    });
+    app.get('/logout',authController.logout);
     
     app.post('/login', authController.login);
-    app.post('/register', (req, res)=>{
-        console.log('register page');
-        res.redirect('/');
-    })  
+    app.post('/register', authController.register)  
 }
 
 module.exports = routes;

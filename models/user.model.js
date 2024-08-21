@@ -7,7 +7,7 @@ const userSchema = mongoose.Schema({
         required : true, 
         index: { unique: true }
     },
-    fullName: {
+    userName: {
         type: String,
         required : true, 
     },
@@ -22,7 +22,7 @@ const userSchema = mongoose.Schema({
         enum: ['user', 'admin']
     },
     urlHost: {
-        type: mongoose.Schema.ObjectId,
+        type: String,
         default: '',
     },
 },{timestamps: true});

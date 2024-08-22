@@ -550,27 +550,29 @@ const postCreateDataSubcribe= async (req, res) => {
   try {
     const { urlAPI, title } = req.body;
     const { tool, sensor} = req.params;
-    const xmlBody =  `
-    <m2m:sub xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${title}">
-        <nu>${urlAPI}</nu>
-        <nct>2</nct>
-    </m2m:sub>
-    `
+    // const xmlBody =  `
+    // <m2m:sub xmlns:m2m="http://www.onem2m.org/xml/protocols" rn="${title}">
+    //     <nu>${urlAPI}</nu>
+    //     <nct>2</nct>
+    // </m2m:sub>
+    // `
+    const body ={
+        "m2m:sub": {
+            "rn": title,
+            "nu": urlAPI,
+            "nct": "2"
+        }
+    }
     const headers = {
       ...configServerOM2M.infoHost.headers,
-      'Content-Type': 'application/xml;ty=23',
+      'Content-Type': 'application/json;ty=23',
     };
 
-    const url = `${configServerOM2M.urlHost()}/${tool}/${sensor}/DATA`;
-    const dataText = await indexService.create(url, xmlBody, headers);
-    console.log(`dataText: ${dataText}`);
-    let data = {};
-    await parseString(dataText, function (err, result) {
-      if(err) throw err;
-      data = result;
-    });
-    // if (!data) throw new Error('Error !!!');
-    res.status(200).json({ data: data });
+    const url = `${configServerOM2M.urlHost()}/${sensor}`;
+    console.log(url);
+    
+    const dataText = await indexService.create(url, body, headers);
+    res.status(200).json({ data: dataText });
   } catch (error) {
     // res.redirect('/');
     console.log('error: ' + error.message);

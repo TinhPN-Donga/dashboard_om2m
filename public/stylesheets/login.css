@@ -1,5 +1,53 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
 
+body {
+    background-image: url("/assets/bg.png") ;
+    background-size: contain;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    height: 100vh;
+  }
+
+  .toggle-panel {
+    background-image: url("/assets/background_card_login.jpg");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  img#logo {
+    width: 70%;
+    margin: 0 auto;
+  }
+
+  img#logo-DA {
+    width: 45%;
+    margin: 50px 0 25px 0;
+  }
+
+  button.hidden {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+  }
+
+  .logo-box{
+      width: 100%;
+      padding: 25px 0;
+  }
+
+  a{
+      cursor: pointer;
+  }
+
 *{
     margin: 0;
     padding: 0;
@@ -19,34 +67,55 @@
 }
 
 .container p{
-    font-size: 14px;
+    font-size: 13px;
     line-height: 20px;
     letter-spacing: 0.3px;
-    margin: 20px 0;
+    text-align: center;
+    margin: 10px 0;
+    color: black;
 }
 
 .container span{
     font-size: 12px;
 }
 
+.container .form-check-inline {
+    display: flex;
+    width: 500px;
+}
+
+.container .form-check-inline .input-saveLogin {
+    float: left;
+}
+
+.container .form-check-input {
+  float: left;
+}
+
+.container .form-check-input label {
+    margin-left: 0px;
+}
+
 .container a{
-    color: #333;
+    color: green;
     font-size: 13px;
     text-decoration: none;
     margin: 15px 0 10px;
+    font-weight: bold;
 }
 
 .container button{
     background-color: #512da8!important;
     color: #fff;
-    font-size: 12px;
+    height: 35px;
+    font-size: 13px;
     padding: 10px 45px;
     border: 1px solid transparent;
     border-radius: 8px;
     font-weight: 600;
     letter-spacing: 0.5px;
     text-transform: uppercase;
-    margin-top: 10px;
+    margin-top: 20px;
     cursor: pointer;
 }
 
@@ -74,12 +143,18 @@
 .container input{
     background-color: #eee;
     border: none;
-    margin: 8px 0;
+    margin: 8px 0 0 0;
     padding: 10px 15px;
     font-size: 13px;
     border-radius: 8px;
     width: 100%;
     outline: none;
+}
+
+.lable-input {
+    font-size: 13px;
+    color: #000;
+    font-weight: bold;
 }
 
 .form-container{

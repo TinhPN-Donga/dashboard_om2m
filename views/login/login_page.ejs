@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>UDA OM2M</title>
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
@@ -12,47 +12,6 @@
     <link rel="stylesheet" href="/stylesheets/style_login.css" />
   </head>
   <style>
-    body {
-      background-image: url("/assets/bg.png");
-      background-size: contain;
-      background-repeat: no-repeat;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      height: 100vh;
-    }
-    .toggle-panel {
-      background-image: url("/assets/background_card_login.jpg");
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    img#logo {
-      width: 70%;
-      margin: 0 auto;
-    }
-    img#logo-DA {
-      width: 45%;
-      margin: 0 auto;
-    }
-    button.hidden {
-      position: absolute;
-      right: 10px;
-      bottom: 10px;
-    }
-    .logo-box{
-        width: 100%;
-        padding: 25px 0;
-    }
-    a{
-        cursor: pointer;
-    }
   </style>
   <body>
     <div class="container" id="container">
@@ -66,7 +25,7 @@
         </div>
         <form class="form-login" action="/register" method="POST">
             <div class="form-group">
-                <label for="username">Email</label>
+                <label class="lable-input" for="username">Email</label>
                 <input
                   type="text"
                   class="form-control input"
@@ -77,7 +36,7 @@
                 />
               </div>
             <div class="form-group">
-              <label for="username">Tên đăng nhập</label>
+              <label class="lable-input" for="username">Tên đăng nhập</label>
               <input
                 type="text"
                 class="form-control input"
@@ -88,7 +47,7 @@
               />
             </div>
             <div class="form-group">
-              <label for="password">Mật khẩu</label>
+              <label class="lable-input" for="password">Mật khẩu</label>
               <input
                 type="password"
                 class="form-control input"
@@ -99,7 +58,7 @@
               />
             </div>
             <div class="form-group">
-                <label for="password">Xác nhận mật khẩu</label>
+                <label class="lable-input" for="password">Xác nhận mật khẩu</label>
                 <input
                   type="password"
                   class="form-control input"
@@ -112,7 +71,7 @@
             <button id="submit" type="submit" class="btn btn-primary">
               Đăng Ký
             </button>
-            <p>Tôi đã có tài khoản. <a id="login">Đăng nhập tại đây!.</a></p>
+            <p>Tôi đã có tài khoản! <a id="login">Đăng nhập</a></p>
           </form>
       </div>
       <div class="form-container sign-in">
@@ -125,7 +84,7 @@
         </div>
         <form class="form-login" action="/login" method="POST">
           <div class="form-group">
-            <label for="username">Tên đăng nhập</label>
+            <label class="lable-input" for="username">Tên đăng nhập</label>
             <input
               type="text"
               class="form-control input"
@@ -136,7 +95,7 @@
             />
           </div>
           <div class="form-group">
-            <label for="password">Mật khẩu</label>
+            <label class="lable-input" for="password">Mật khẩu</label>
             <input
               type="password"
               class="form-control input"
@@ -146,10 +105,15 @@
               required
             />
           </div>
+          <div class="form-check-inline">
+            <label class="form-check-label">
+              <input type="checkbox" class="input-saveLogin" value=""><p>Lưu đăng nhập</p>
+            </label>
+          </div>
           <button id="submit" type="submit" class="btn btn-primary">
             Đăng nhập
           </button>
-          <p>Bạn chưa có account? <a id="register">Đăng ký tại đây.</a></p>
+          <p>Bạn chưa có tài khoản? <a id="register">Đăng ký</a></p>
         </form>
       </div>
       <div class="toggle-container">

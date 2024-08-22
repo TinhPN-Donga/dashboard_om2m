@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>UDA OM2M</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/stylesheets/login.css" />
+    <link rel="stylesheet" href="/stylesheets/style_login.css" />
+  </head>
+  <style>
+  </style>
+  <body>
+    <div class="container" id="container">
+      <div class="form-container sign-up">
+        <div class="logo-box">
+          <img
+            id="logo-DA"
+            src="/assets/LOGO_UDA_2023_VN_EN_chuan.png"
+            alt="logo đông á"
+          />
+        </div>
+        <form class="form-login" action="/register" method="POST">
+            <div class="form-group">
+                <label class="lable-input" for="username">Email</label>
+                <input
+                  type="text"
+                  class="form-control input"
+                  id="username"
+                  name="email"
+                  placeholder="Email"
+                  required
+                />
+              </div>
+            <div class="form-group">
+              <label class="lable-input" for="username">Tên đăng nhập</label>
+              <input
+                type="text"
+                class="form-control input"
+                id="username"
+                name="username"
+                placeholder="Tên đăng nhập"
+                required
+              />
+            </div>
+            <div class="form-group">
+              <label class="lable-input" for="password">Mật khẩu</label>
+              <input
+                type="password"
+                class="form-control input"
+                id="password"
+                name="password"
+                placeholder="Mật khẩu"
+                required
+              />
+            </div>
+            <div class="form-group">
+                <label class="lable-input" for="password">Xác nhận mật khẩu</label>
+                <input
+                  type="password"
+                  class="form-control input"
+                  id="password"
+                  name="confirm_password"
+                  placeholder="Xác nhận mật khẩu"
+                  required
+                />
+              </div>
+            <button id="submit" type="submit" class="btn btn-primary">
+              Đăng Ký
+            </button>
+            <p>Tôi đã có tài khoản! <a id="login">Đăng nhập</a></p>
+          </form>
+      </div>
+      <div class="form-container sign-in">
+        <div class="logo-box">
+          <img
+            id="logo-DA"
+            src="/assets/LOGO_UDA_2023_VN_EN_chuan.png"
+            alt="logo đông á"
+          />
+        </div>
+        <form class="form-login" action="/login" method="POST">
+          <div class="form-group">
+            <label class="lable-input" for="username">Tên đăng nhập</label>
+            <input
+              type="text"
+              class="form-control input"
+              id="username"
+              name="username"
+              placeholder="Tên đăng nhập"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label class="lable-input" for="password">Mật khẩu</label>
+            <input
+              type="password"
+              class="form-control input"
+              id="password"
+              name="password"
+              placeholder="Mật khẩu"
+              required
+            />
+          </div>
+          <div class="form-check-inline">
+            <label class="form-check-label">
+              <input type="checkbox" class="input-saveLogin" value=""><p>Lưu đăng nhập</p>
+            </label>
+          </div>
+          <button id="submit" type="submit" class="btn btn-primary">
+            Đăng nhập
+          </button>
+          <p>Bạn chưa có tài khoản? <a id="register">Đăng ký</a></p>
+        </form>
+      </div>
+      <div class="toggle-container">
+        <div class="toggle">
+          <div class="toggle-panel toggle-left">
+            <img id="logo" src="/assets/logo_om2m.png" alt="logo đông á" />
+          </div>
+          <div class="toggle-panel toggle-right">
+            <img id="logo" src="/assets/logo_om2m.png" alt="logo đông á" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </body>
+  <script>
+    const container = document.getElementById("container");
+    const registerBtn = document.getElementById("register");
+    const loginBtn = document.getElementById("login");
+
+    registerBtn.addEventListener("click", () => {
+      container.classList.add("active");
+    });
+
+    loginBtn.addEventListener("click", () => {
+      container.classList.remove("active");
+    });
+  </script>
+</html>

@@ -81,6 +81,7 @@ body {
 }
 
 .container .form-check-inline {
+    margin: 8px 0 0 0;
     display: flex;
     justify-content: start;
     align-items: start;
@@ -92,10 +93,6 @@ body {
     padding: 0!important;
 }
 
-
-.container .form-check-input {
-  float: left;
-}
 
 .container .form-check-input label {
     margin-left: 0px;
@@ -120,7 +117,7 @@ body {
     font-weight: 600;
     letter-spacing: 0.5px;
     text-transform: uppercase;
-    margin-top: 20px;
+    margin-top: 15px;
     cursor: pointer;
 }
 

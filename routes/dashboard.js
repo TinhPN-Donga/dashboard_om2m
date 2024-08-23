@@ -25,8 +25,7 @@ router.delete('/delete', indexController.deleteQuery);
 router.post('/dashboard/create', indexController.postCreate);
 router.post('/dashboard/create-tool', indexController.postCreateApplication);
 router.post('/dashboard/create/:tool/sensor', indexController.postCreateSensor);
-router.post('/dashboard/create/:tool/:sensor/container', indexController.postCreateCon..
-    tainerInSensor);
+router.post('/dashboard/create/:tool/:sensor/container', indexController.postCreateCon.tainerInSensor);
 router.post('/dashboard/create/:tool/:sensor/subcribe', indexController.postCreateDataSubcribe);
 
 module.exports = router;

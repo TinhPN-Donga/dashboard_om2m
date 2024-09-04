@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const {StatusEnum, RoleUserEnum} = require('../utils/enum')
 
 const userSchema = mongoose.Schema({
     email: {
@@ -18,12 +19,17 @@ const userSchema = mongoose.Schema({
     },
     role: {
         type: String,
-        default: 'user',
-        enum: ['user', 'admin']
+        default: Object.values(RoleUserEnum),
+        enum: RoleUserEnum.USER
     },
     urlHost: {
         type: String,
         default: '',
+    },
+    status: {
+        type: String,
+        enum: Object.values(StatusEnum),
+        default: StatusEnum.CREATED,
     },
 },{timestamps: true});
 

@@ -22,6 +22,9 @@ router.get('/delete/data/:id', indexController.deleteById);
 router.delete('/delete/data/:id', indexController.deleteById);
 router.delete('/delete', indexController.deleteQuery);
 
+// sensor create data
+router.post('/sensor/create-data', indexController.postCreateData);
+
 router.post('/dashboard/create', indexController.postCreate);
 router.post('/dashboard/create-tool', indexController.postCreateApplication);
 router.post('/dashboard/create/:tool/sensor', indexController.postCreateSensor);

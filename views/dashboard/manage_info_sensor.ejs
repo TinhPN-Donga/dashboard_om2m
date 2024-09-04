@@ -3,43 +3,11 @@
   <div class="page-breadcrumb bg-white">
     <div class="row align-items-center">
       <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-        <h4 class="page-title"><%=title%>/<%=sensor%></h4>
+        <h4 class="page-title"><%=data.name%></h4>
       </div>
     </div>
   </div>
   <div class="container-fluid">
-    <div class="row">
-      <div class="col-md-12 col-lg-12 col-sm-12">
-        <div class="white-box">
-          <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-            <h4 class="page-title" style="font-weight: bold">Descriptor</h4>
-          </div>
-          <%if(!Object.keys(data.description).length){%>
-            <h4 class="page-title">No data</h4>
-          <%}else{%>
-          <div class="table-responsive">
-            <table class="table no-wrap">
-              <thead>
-                <tr>
-                  <%for(let k in data.description){%>
-                  <th class="border-top-0"><%= k%></th>
-                  <%}%>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <%for(let k in data.description){%>
-                  <td class="txt-oflo"><%= data.description[k]%></td>
-                  <%}%>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <%}%>
-        </div>
-      </div>
-    </div>
-
     <div class="row">
       <div class="col-md-12 col-lg-12 col-sm-12">
         <div class="white-box">

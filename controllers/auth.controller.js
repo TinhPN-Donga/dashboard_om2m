@@ -75,6 +75,7 @@ const authController = {
             if(!newData.userName){
                 throw new Error('User name not empty');
             }
+            
             const emailExisted = await UserService.findByEmail(newData.email);
             if(emailExisted){
                 throw new Error('Email already exists');

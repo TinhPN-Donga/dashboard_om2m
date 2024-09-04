@@ -40,7 +40,7 @@
             buildHtml();
         });
 
-        async function addAddListener() {
+        async function addListener() {
             let selectTool = document.getElementById('select-tool');
             let selectSensor = document.getElementById('select-sensor');
             let groupURL = document.getElementById('group-url');
@@ -62,7 +62,7 @@
                     inputElement.setAttribute("placeholder", "Enter URL API");
 
                     // Lấy đối tượng div để chèn phần tử input vào
-                    var formDiv = document.getElementById("myForm");
+                    let formDiv = document.getElementById("myForm");
 
                     // Thêm phần tử input vào div
                     groupURL.appendChild(inputElement);
@@ -121,10 +121,10 @@
 
         async function buildHtml() {
             formInner.innerHTML = await getForm();
-            await addAddListener();
+            await addListener();
         }
 
-         function getForm() {
+        function getForm() {
             switch (value) {
                 case '1': return  getHtmlFormCreateApplication();
                 case '2': return  getHtmlFormCreateSensor();
@@ -134,7 +134,7 @@
             }
         }
 
-         function getHtmlFormCreateApplication() {
+        function getHtmlFormCreateApplication() {
             return `
                     <form action="" method="POST">
                         <input type="hidden" name="method" value="1">
@@ -150,7 +150,8 @@
                     </form>
                 `;
         }
-         function getHtmlFormCreateSensor() {
+         
+        function getHtmlFormCreateSensor() {
             return `
                         <form action="" method="POST">
                             <input type="hidden" name="method" value="2">
@@ -168,7 +169,7 @@
                     `;
         }
 
-         function getHtmlFormCreateContainer() {
+        function getHtmlFormCreateContainer() {
             return `
                         <form action="" method="POST">
                             <input type="hidden" name="method" value="3">
@@ -190,7 +191,7 @@
                       `;
         }
 
-         function getHtmlFormCreateNotify() {
+        function getHtmlFormCreateNotify() {
             return `
                         <form action="" method="POST">
                             <input type="hidden" name="method" value="4">

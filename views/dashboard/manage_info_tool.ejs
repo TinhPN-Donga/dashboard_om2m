@@ -3,7 +3,7 @@
         <div class="page-breadcrumb bg-white">
             <div class="row align-items-center">
                 <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-                    <h4 class="page-title"><%=title%></h4>
+                    <h4 class="page-title"><%=dataTool.title%></h4>
                 </div>
             </div>
         </div>
@@ -11,7 +11,7 @@
             <div class="row">
                 <div class="col-md-12 col-lg-12 col-sm-12">
                     <div class="white-box">
-                        <a href="/dashboard/create/<%=title%>/sensor">+ Create new Container</a>
+                        <a href="/dashboard/create/<%=dataTool.id%>/sensor">+ Create new Container</a>
                         <%if(data.length == 0){%>
                             <p class="text-center">No data</p>
                         <%}else{%>
@@ -34,7 +34,7 @@
                                                     <%= data[i].name%>
                                                 </td>
                                                 <td class="text-center">
-                                                    <a class="btn btn-primary" href="/info/<%=title%>/<%=data[i].id%>">View</a>
+                                                    <a class="btn btn-primary" href="/info/<%=dataTool.id%>/<%=data[i].id%>">View</a>
                                                 </td>
                                                 <td class=" text-center">
                                                     <input type="checkbox" name="vehicle3" value="<%= data[i].name%>">

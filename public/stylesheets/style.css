@@ -61,3 +61,37 @@ body {
 .list ul li:hover:before {
   transform: scaleX(1);
 }
+#form-create{
+  transition: all 1s ease;
+  max-height: 0;
+}
+#form-create.active{
+  max-height: 500px;
+  transition: all 1s ease;
+}
+
+/* header dropdown*/
+
+.navbar {
+  background-color: #343a40;
+}
+.user-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+}
+.user-circle img {
+  width: 100%;
+  height: auto;
+}
+.dropdown-menu {
+  right: 0;
+  left: auto;
+}
+
+.dropdown-divider {
+  margin: 0.2rem 0;
+  border-top: 1px solid #000000;
+}

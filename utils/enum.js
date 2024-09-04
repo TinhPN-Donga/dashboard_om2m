@@ -1,16 +1,14 @@
-const StatusEnum = {
-    CREATED: 'created',
-    PENDING: 'pending',
-    COMPLETED: 'completed',
-    CANCELED: 'canceled',
+const StatusUserEnum = {
+    ENABLE: 'enable',
+    DISABLE: 'disable'
   };
 
 const RoleUserEnum = {
     USER: 'user',
     ADMIN: 'admin',
-  };
+};
 
 module.exports = {
-    StatusEnum,
-    RoleUserEnum
+  StatusUserEnum,
+  RoleUserEnum
 }

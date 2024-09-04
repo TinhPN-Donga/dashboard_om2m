@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const {StatusEnum, RoleUserEnum} = require('../utils/enum')
+const {StatusUserEnum, RoleUserEnum} = require('../utils/enum')
 
 const userSchema = mongoose.Schema({
     email: {
@@ -28,8 +28,8 @@ const userSchema = mongoose.Schema({
     },
     status: {
         type: String,
-        enum: Object.values(StatusEnum),
-        default: StatusEnum.CREATED,
+        enum: Object.values(StatusUserEnum),
+        default: StatusUserEnum.ENABLE,
     },
 },{timestamps: true});
 

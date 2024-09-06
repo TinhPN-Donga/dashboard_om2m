@@ -59,6 +59,14 @@ const create = async (url,body, headers) => {
       return fetchApi.json();
 }
 
+const fetchAPI = async (url, reqOption) => {
+    try {
+        let fetchApi = await fetch(url, reqOption);
+        return fetchApi;
+    } catch (error) {
+        return new Error('Fetch API error!!!');
+    }
+}
 
 module.exports = {
     findById,
@@ -66,5 +74,9 @@ module.exports = {
     findInfo,
     deleteById,
     create,
-    deleteQuery
+    deleteQuery,
+    fetchAPI
 }
+
+
+

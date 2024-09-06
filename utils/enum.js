@@ -6,6 +6,7 @@ const StatusUserEnum = {
 const RoleUserEnum = {
     USER: 'user',
     ADMIN: 'admin',
+    SUPERADMIN: 'superadmin',
 };
 
 module.exports = {

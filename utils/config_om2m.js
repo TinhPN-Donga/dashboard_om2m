@@ -1,12 +1,22 @@
 const infoHost = {
-    uri: '~/mn-cse',
+    uri: '~/uda-mn-cse',
     uriById: (id)=>`~/mn-cse/${id}`,
-    host: 'https://mncse.cntt-uda.site',
+    host: 'https://gateway.cntt-uda.site',
     headers: {
         "Content-Type": "application/json",
         "x-m2m-origin": "admin:admin",
-      },
+    },
 }
+
+// const infoHost = {
+//     uri: '~/mn-cse',
+//     uriById: (id)=>`~/mn-cse/${id}`,
+//     host: 'https://mncse.cntt-uda.site',
+//     headers: {
+//         "Content-Type": "application/json",
+//         "x-m2m-origin": "admin:admin",
+//       },
+// }
 
 const account = (username, password) => {
     return `${username}:${password}`
@@ -21,7 +31,6 @@ function urlHost() {
 }
 
 function urlHostListData(name, device, data) {
-    // return `${urlHost()}/mn-name/${name}/${device}/${data}?rcn=4`;
     return `${urlHost()}/${name}${device?'/'+device:''}${data ?'?'+data:''}`;
 }
 

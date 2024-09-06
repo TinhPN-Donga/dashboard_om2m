@@ -4,6 +4,8 @@ const platformSchema = mongoose.Schema({
     host: {
         type: String,
         default: '',
+        unique: true,
+        required: true,
     },
     uri: {
         type: String,
@@ -11,13 +13,12 @@ const platformSchema = mongoose.Schema({
     },
     account: {
         type: String,
-        default: '',
+        required: true,
     },
     password: {
         type: String,
-        default: '',
+        required: true,
     },
-    
 },{timestamps: true});
 
 module.exports = mongoose.model('PLATFORM', platformSchema);

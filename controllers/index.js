@@ -5,13 +5,6 @@ const indexService = require('../services/index');
 const { v4: uuidv4 } = require('uuid');
 const listDataDescription = ['Data','Description'];
 
-class DataDHT {
-  constructor(temp, humi, createdAt) {
-    this.temp = temp;
-    this.humi = humi;
-    this.createdAt = createdAt;
-  }
-}
 const getCreatePage = async (req, res) => {
   res.render('dashboard/create_page');
 }

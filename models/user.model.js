@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
-const {StatusUserEnum, RoleUserEnum} = require('../utils/enum')
-
+const {StatusUserEnum} = require('../utils/enum')
+const {findOne} = require('../services/role_user.service');
 const userSchema = mongoose.Schema({
     email: {
         type: String,
@@ -18,9 +18,8 @@ const userSchema = mongoose.Schema({
         required : true, 
     },
     role: {
-        type: String,
-        default: Object.values(RoleUserEnum),
-        enum: RoleUserEnum.USER
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ROLEUSER'
     },
     urlHost: {
         type: String,
@@ -29,8 +28,21 @@ const userSchema = mongoose.Schema({
     status: {
         type: String,
         enum: Object.values(StatusUserEnum),
-        default: StatusUserEnum.ENABLE,
+        default: StatusUserEnum.DISABLE,
     },
 },{timestamps: true});
+
+userSchema.pre('save', async function (next) {
+    if (!this.role) {
+        const defaultRole = await findOne({ name: 'user' }); 
+        
+        if (defaultRole) {
+            this.role = defaultRole._id;  
+        } else {
+            throw new Error("Default role not found");
+        }
+    }
+    next();
+});
 
 module.exports = mongoose.model('USER', userSchema);

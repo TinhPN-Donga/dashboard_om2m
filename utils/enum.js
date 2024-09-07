@@ -1,7 +1,11 @@
 const StatusUserEnum = {
     ENABLE: 'enable',
     DISABLE: 'disable'
-  };
+};
+
+const checkStatusUser = (status) => {
+  return Object.values(StatusUserEnum).includes(status);
+};
 
 const RoleUserEnum = {
     USER: 'user',
@@ -11,5 +15,6 @@ const RoleUserEnum = {
 
 module.exports = {
   StatusUserEnum,
-  RoleUserEnum
+  RoleUserEnum,
+  checkStatusUser
 }

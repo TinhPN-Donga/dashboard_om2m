@@ -41,10 +41,9 @@ const authController = {
             }
             let checkPass = await bcrypt.compare(body.password, user.password);
             if(checkPass){
-                const result = {...defaultResult, result: user};
                 const newAccessToken = generateAccessToken({ data: user});
                 res.cookie('user', JSON.stringify(user));
-                res.cookie('access_token', newAccessToken);
+                res.cookie('access_token', newAccessToken, { httpOnly: true }),
                 res.redirect('/');
     
             }else{

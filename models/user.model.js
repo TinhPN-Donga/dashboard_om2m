@@ -1,11 +1,13 @@
 const mongoose = require('mongoose');
 const {StatusUserEnum} = require('../utils/enum')
 const {findOne} = require('../services/role_user.service');
+
 const userSchema = mongoose.Schema({
     email: {
         type: String,
         default: '',
         required : true, 
+        unique: true,
         index: { unique: true }
     },
     userName: {
@@ -20,10 +22,6 @@ const userSchema = mongoose.Schema({
     role: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'ROLEUSER'
-    },
-    urlHost: {
-        type: String,
-        default: '',
     },
     status: {
         type: String,

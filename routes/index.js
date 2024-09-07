@@ -9,17 +9,17 @@ var roleUserControllers = require('./role_user.route');
 
 const routes = (app) => {
 
-    // platform
-    app.use('/platform', platformRoute);
-
-    //role use
-    app.use('/role-user', roleUserControllers);
     
     // auth
     authRouter(app);
 
     app.get('/', authMiddleware.authLogin);
 
+    // platform
+    app.use('/platform', authMiddleware.authentication, authMiddleware.saveUserLocal, platformRoute);
+
+    //role use
+    app.use('/role-user', authMiddleware.authentication, authMiddleware.saveUserLocal, roleUserControllers);
 
     // dashboard
     app.use(authMiddleware.authentication,authMiddleware.saveUserLocal,dashboardRouter);
